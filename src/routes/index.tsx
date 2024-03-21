@@ -89,28 +89,31 @@ function HomePageComponent() {
       </div>
       <div className="flex flex-col items-center gap-10">
         <div className="flex flex-col md:flex-row gap-10 items-center">
-          <a href="https://react.dev" target="_blank">
+          <a href="https://www.bancobpi.pt/particulares" target="_blank">
             <img src={bpiLogo} alt="BPI logo" className="h-12" />
           </a>
-          <a href="https://react.dev" target="_blank">
+          <a href="https://www.fct.pt/" target="_blank">
             <img src={fctLogo} alt="FCT logo" className="h-14" />
           </a>
-          <a href="https://react.dev" target="_blank">
+          <a href="https://fundacaolacaixa.pt/pt/" target="_blank">
             <img src={flcLogo} alt="FLC logo" className="h-12" />
           </a>
         </div>
         <div className="flex flex-col md:flex-row gap-10 items-center mb-24">
-          <a href="https://react.dev" target="_blank">
+          <a href="https://aquaevitae.pt/" target="_blank">
             <img src={avLogo} alt="AV logo" className="h-16" />
           </a>
-          <a href="https://react.dev" target="_blank">
+          <a href="https://portal3.ipb.pt/index.php/pt/ipb" target="_blank">
             <img src={ipbLogo} alt="IPB logo" className="h-12" />
           </a>
-          <a href="https://react.dev" target="_blank">
+          <a href="https://www.utfpr.edu.br/" target="_blank">
             <img src={utfprLogo} alt="UTFPR logo" className="h-12" />
           </a>
         </div>
       </div>
+        <footer className="">
+
+        </footer>
     </div>
   );
 }
