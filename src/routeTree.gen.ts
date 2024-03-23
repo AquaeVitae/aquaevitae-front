@@ -11,38 +11,61 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as FormImport } from './routes/form'
-import { Route as IndexImport } from './routes/index'
+import { Route as CameraImport } from './routes/camera'
+import { Route as LayoutImport } from './routes/_layout'
+import { Route as LayoutIndexImport } from './routes/_layout/index'
+import { Route as LayoutFormImport } from './routes/_layout/form'
 
 // Create/Update Routes
 
-const FormRoute = FormImport.update({
-  path: '/form',
+const CameraRoute = CameraImport.update({
+  path: '/camera',
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexRoute = IndexImport.update({
-  path: '/',
+const LayoutRoute = LayoutImport.update({
+  id: '/_layout',
   getParentRoute: () => rootRoute,
+} as any)
+
+const LayoutIndexRoute = LayoutIndexImport.update({
+  path: '/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutFormRoute = LayoutFormImport.update({
+  path: '/form',
+  getParentRoute: () => LayoutRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/': {
-      preLoaderRoute: typeof IndexImport
+    '/_layout': {
+      preLoaderRoute: typeof LayoutImport
       parentRoute: typeof rootRoute
     }
-    '/form': {
-      preLoaderRoute: typeof FormImport
+    '/camera': {
+      preLoaderRoute: typeof CameraImport
       parentRoute: typeof rootRoute
+    }
+    '/_layout/form': {
+      preLoaderRoute: typeof LayoutFormImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/': {
+      preLoaderRoute: typeof LayoutIndexImport
+      parentRoute: typeof LayoutImport
     }
   }
 }
 
 // Create and export the route tree
 
-export const routeTree = rootRoute.addChildren([IndexRoute, FormRoute])
+export const routeTree = rootRoute.addChildren([
+  LayoutRoute.addChildren([LayoutFormRoute, LayoutIndexRoute]),
+  CameraRoute,
+])
 
 /* prettier-ignore-end */
