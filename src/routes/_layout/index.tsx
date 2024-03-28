@@ -111,7 +111,6 @@ function HomePageComponent() {
           </a>
         </div>
       </div>
-      <footer className=""></footer>
     </div>
   );
 }
