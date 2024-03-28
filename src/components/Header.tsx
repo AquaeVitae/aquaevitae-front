@@ -4,14 +4,10 @@ import { PackageSearch, SquarePen, Handshake } from "lucide-react";
 
 function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full border border-white/20 bg-background/75 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+    <header className="sticky top-0 z-50 w-full border border-white/75 bg-background/75 backdrop-blur supports-[backdrop-filter]:bg-background/75">
       <div className="container flex h-14 max-w-screen-2xl items-center justify-between px-8 py-2">
         <Link to="/" className="flex items-center space-x-2">
-          <img
-            className="size-6"
-            src="./public/logo.png"
-            alt="Dermaform Logo"
-          />
+          <img className="size-6" src="/logo.png" alt="Dermaform Logo" />
           <h1 className="text-1xl font-bold">Dermaform</h1>
         </Link>
         <div className="flex space-x-4 md:space-x-6">

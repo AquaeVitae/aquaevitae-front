@@ -17,7 +17,7 @@ export const AuroraBackground = ({
     <main>
       <div
         className={cn(
-          "transition-bg relative flex  h-[100vh] flex-col items-center bg-zinc-50  text-slate-950 dark:bg-zinc-900",
+          "transition-bg relative flex  h-[100vh] flex-col items-center bg-background text-slate-950 dark:bg-zinc-900",
           className,
         )}
         {...props}
@@ -26,9 +26,10 @@ export const AuroraBackground = ({
           <div
             className={cn(
               `
-            pointer-events-none
+              pointer-events-none
             absolute
             -inset-[10px]
+            z-40
             opacity-50
             blur-[10px]
             invert

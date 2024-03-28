@@ -26,8 +26,10 @@ function FormFooter({
   const handleBack = () => {
     if (step > 0) {
       setStep(step - 1);
-    } else {
+    } else if (window.history.length > 1) {
       router.history.back();
+    } else {
+      router.navigate({ to: "/" });
     }
     onHandleBack?.();
   };

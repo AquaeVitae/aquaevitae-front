@@ -78,12 +78,17 @@ export default {
           from: { backgroundPosition: "50% 50%, 50% 50%" },
           to: { backgroundPosition: "350% 50%, 350% 50%" },
         },
+        slide: {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(calc(-100% - var(--gap)))" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         shine: "shine 8s ease-in-out infinite",
         aurora: "aurora 60s linear infinite",
+        slide: "slide 40s linear infinite",
       },
     },
   },
