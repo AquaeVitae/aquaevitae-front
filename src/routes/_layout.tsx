@@ -1,19 +1,30 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from "@tanstack/react-router";
 import { Outlet } from "@tanstack/react-router";
 import Header from "@/components/Header";
+import { AuroraBackground } from "@/components/ui/aurora-background";
+import { motion } from "framer-motion";
 
-export const Route = createFileRoute('/_layout')({
+export const Route = createFileRoute("/_layout")({
   component: LayoutComponent,
-})
+});
 
 export function LayoutComponent() {
   return (
-    <div className="flex flex-col h-screen">
+    <AuroraBackground>
       <Header />
-      <main className="flex-1">
+      <motion.div
+        initial={{ opacity: 0.0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{
+          delay: 0.3,
+          duration: 1,
+          ease: "easeInOut",
+        }}
+        className="relative flex h-full flex-col items-center justify-center"
+      >
         <Outlet />
-      </main>
+      </motion.div>
       {/* <Footer > */}
-    </div>
-  )
+    </AuroraBackground>
+  );
 }
