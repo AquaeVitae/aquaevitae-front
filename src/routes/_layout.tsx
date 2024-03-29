@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Outlet } from "@tanstack/react-router";
 import Header from "@/components/Header";
-import Footer from '@/components/Footer';
+import Footer from "@/components/Footer";
 
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { motion } from "framer-motion";
@@ -22,10 +22,10 @@ export function LayoutComponent() {
           duration: 1,
           ease: "easeInOut",
         }}
-        className="relative flex h-full flex-col items-center justify-center"
+        className="relative flex h-full w-full flex-col items-center justify-center"
       >
         <Outlet />
-        </motion.div>
+      </motion.div>
       <Footer />
     </AuroraBackground>
   );

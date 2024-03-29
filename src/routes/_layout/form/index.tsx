@@ -25,7 +25,7 @@ function ActiveStepFormComponent() {
 function Form() {
   return (
     <FormProvider>
-      <div className="z-50 flex h-full w-full flex-col items-center justify-center">
+      <div className="z-40 flex h-full w-full flex-col items-center justify-center">
         <ActiveStepFormComponent />
       </div>
     </FormProvider>

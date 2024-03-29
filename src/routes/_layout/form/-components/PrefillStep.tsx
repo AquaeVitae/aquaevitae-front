@@ -22,10 +22,12 @@ function PrefillStep() {
     setFormData({ confirmation: checked === true });
   };
 
-  const radioGroupDefaultValue = formData.prefill ? "feature-extraction" : "manual";
+  const radioGroupDefaultValue = formData.prefill
+    ? "feature-extraction"
+    : "manual";
 
   return (
-    <Card className="relative m-1 flex h-[500px] w-11/12 max-w-4xl flex-col justify-between rounded-lg border">
+    <Card className="relative m-1 flex h-[500px] w-11/12 max-w-3xl flex-col justify-between rounded-lg border">
       <FormHeader
         title="Formulário de pele"
         description="Preencha um formulário e descubra os produtos mais indicados para cuidar da sua pele"
