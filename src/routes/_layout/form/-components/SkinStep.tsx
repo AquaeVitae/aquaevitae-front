@@ -1,8 +1,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardTitle,
 } from "@/components/ui/card";
 import React from "react";
 import { FormData, useFormState } from "./FormContext";
@@ -39,32 +37,39 @@ function SkinStep() {
   return (
     <Card className="relative flex h-[500px] w-11/12 max-w-3xl flex-col justify-between rounded-lg border">
       <FormHeader
-        title="Como você descreveria sua pele?"
-        description="Por favor selecione todas as opções que se aplicam."
+        title="Características da pele"
+        description="Selecione multiplas respostas para descrever sua pele da melhor forma"
       />
       <CardContent className="flex h-full flex-col p-4 md:p-6">
         <form
           onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-10"
+          className="flex h-full flex-col justify-between"
         >
-          <MultipleSelector
-            value={skinTypeValue}
-            onChange={setSkinTypeValue}
-            defaultOptions={SKIN_TYPE_OPTIONS}
-            placeholder="Selecione todas as opções que se aplicam."
-            emptyIndicator={
-              <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                Não encontrado
-              </p>
-            }
-          />
           <div>
-            <CardTitle className="text-xl md:text-3xl">
-              Selecione até três problemas de pele que você enfrenta
-            </CardTitle>
-            <CardDescription className="text-left text-xs md:text-sm mt-1.5">
-              como você descreveria sua pele?
-            </CardDescription>
+            <h2 className="text-lg">Pele pele pele</h2>
+            <p className="mt-1 text-left text-xs text-muted-foreground md:text-sm">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            </p>
+            <MultipleSelector
+              value={skinTypeValue}
+              onChange={setSkinTypeValue}
+              defaultOptions={SKIN_TYPE_OPTIONS}
+              placeholder="Selecione todas as opções que se aplicam."
+              emptyIndicator={
+                <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
+                  Não encontrado
+                </p>
+              }
+              className="mt-4"
+            />
+          </div>
+          <div>
+            <h2 className="text-lg">
+              Selecione até 3 problemas de pele que você enfrenta
+            </h2>
+            <p className="mt-1 text-left text-xs text-muted-foreground md:text-sm">
+              Lorem ipsum dolor sit amet consectetur adipisicing elit.
+            </p>
             <MultipleSelector
               value={skinDiseaseValue}
               onChange={setSkinDiseaseValue}
@@ -75,7 +80,7 @@ function SkinStep() {
                   Não encontrado
                 </p>
               }
-              className="mt-6"
+              className="mt-4"
             />
           </div>
         </form>

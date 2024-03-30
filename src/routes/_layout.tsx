@@ -20,9 +20,9 @@ export function LayoutComponent() {
         transition={{
           delay: 0.3,
           duration: 1,
-          ease: "easeInOut",
+          ease: "easeIn",
         }}
-        className=" relative flex h-full w-full flex-col items-center justify-center"
+        className="relative z-40 flex w-full flex-grow flex-col items-center"
       >
         <Outlet />
       </motion.div>
