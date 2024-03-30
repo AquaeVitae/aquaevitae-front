@@ -66,7 +66,7 @@ function ProductsPage() {
   ];
 
   return (
-    <div className="grid w-full max-w-screen-xl grid-cols-4 gap-2 p-6">
+    <div className="z-40 grid w-full max-w-screen-xl grid-cols-4 gap-2 p-6">
       {products.map((product, index) => {
         if (index === 0 && product.special) {
           return (

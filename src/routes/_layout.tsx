@@ -22,7 +22,7 @@ export function LayoutComponent() {
           duration: 1,
           ease: "easeIn",
         }}
-        className="relative z-40 flex w-full flex-grow flex-col items-center"
+        className="relative flex w-full flex-grow flex-col items-center"
       >
         <Outlet />
       </motion.div>
