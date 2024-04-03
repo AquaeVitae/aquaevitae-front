@@ -3,6 +3,8 @@ import PrefillStep from "./-components/PrefillStep";
 import CameraStep from "./-components/CameraStep";
 import { FormProvider, useFormState } from "./-components/FormContext";
 import SkinStep from "./-components/SkinStep";
+import SkinProblemsStep from "./-components/SkinProblemsStep";
+import UserInfoStep from "./-components/UserInfoStep";
 
 export const Route = createFileRoute("/_layout/form/")({
   component: Form,
@@ -17,6 +19,10 @@ function ActiveStepFormComponent() {
       return <CameraStep />;
     case 2:
       return <SkinStep />;
+    case 3:
+      return <SkinProblemsStep />;
+    case 4:
+      return <UserInfoStep />;
     default:
       return null;
   }

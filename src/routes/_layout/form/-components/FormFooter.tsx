@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { useFormState } from "./FormContext";
 import { ArrowRightIcon, ArrowLeftIcon } from "lucide-react";
 import { useRouter } from "@tanstack/react-router";
+import { useFormContext } from "react-hook-form";
 
 interface FormFooterProps {
   hideBack?: boolean;
@@ -10,6 +11,7 @@ interface FormFooterProps {
   disableContinue?: boolean;
   onHandleBack?: () => void;
   onHandleNext?: () => void;
+  fieldsToValidate?: string[];
 }
 
 function FormFooter({
@@ -19,8 +21,10 @@ function FormFooter({
   disableContinue,
   onHandleBack,
   onHandleNext,
+  fieldsToValidate = [],
 }: FormFooterProps) {
   const { step, setStep, formData } = useFormState();
+  const { trigger } = useFormContext();
   const router = useRouter();
 
   const handleBack = () => {
@@ -34,10 +38,13 @@ function FormFooter({
     onHandleBack?.();
   };
 
-  const handleNext = () => {
-    console.log(formData);
-    setStep(step + 1);
-    onHandleNext?.();
+  const handleNext = async () => {
+    const isValid = await trigger(fieldsToValidate);
+    if (isValid) {
+      console.log(formData);
+      setStep(step + 1);
+      onHandleNext?.();
+    }
   };
 
   return (

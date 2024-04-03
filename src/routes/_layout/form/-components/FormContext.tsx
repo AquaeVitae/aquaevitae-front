@@ -10,6 +10,10 @@ import { z } from "zod";
 const schema = z.object({
   prefill: z.boolean(),
   confirmation: z.boolean(),
+  name: z.string().min(1, "Nome é obrigatório"),
+  /*... resto ...*/
+  age: z.number().min(12, "Idade é obrigatória"),
+  email: z.string().email("E-mail Invalido").optional(),
 });
 
 export type FormData = z.infer<typeof schema>;
@@ -31,6 +35,8 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({
   const [formData, setFormData] = useState<FormData>({
     prefill: true,
     confirmation: false,
+    name: "",
+    age: 0,
   });
 
   const methods = useForm<FormData>({
