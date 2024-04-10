@@ -38,7 +38,7 @@ function SkinProblemsStep() {
     <Card className="relative flex h-[600px] w-11/12 max-w-3xl flex-col justify-between rounded-lg border">
       <FormHeader
         title="Patologias de pele"
-        description="Selecione até 3 patologias de pele que você enfrenta e descreva o grau delas"
+        description="Selecione até 5 patologias de pele que você enfrenta e o seu grau:"
       />
       <CardContent className="flex h-full flex-col p-4 md:p-6">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
@@ -53,10 +53,10 @@ function SkinProblemsStep() {
               </p>
             }
             className="mt-4"
-            maxSelected={3}
+            maxSelected={5}
             onMaxSelected={(maxLimit) => {
               toast({
-                title: `You have reached max selected: ${maxLimit}`,
+                title: `Você atingiu o limite de ${maxLimit} opções.`,
               });
             }}
           />
@@ -66,13 +66,14 @@ function SkinProblemsStep() {
                 {option.label}
               </span>
               <Slider
-                defaultValue={[1]}
+                // defaultValue={[1]}
                 max={3}
-                step={1}
+                min={1}
+                // step={1}
                 onValueChange={(value) => handleSliderChange(value[0], option)}
               />
               <span className="text-sm">
-                {skinDiseaseIntensity[option.value] || 0}
+                {skinDiseaseIntensity[option.value] || "Baixo"}
               </span>
             </div>
           ))}

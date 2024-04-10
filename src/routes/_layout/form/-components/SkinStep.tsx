@@ -30,9 +30,9 @@ function SkinStep() {
       if (prevSelected.includes(value)) {
         return prevSelected.filter((item) => item !== value);
       } else {
-        if (prevSelected.length >= 5) {
+        if (prevSelected.length >= 3) {
           toast({
-            title: "Você atingiu o limite de 5 opções",
+            title: "Você atingiu o limite de 3 opções",
           });
           return prevSelected;
         }
@@ -45,7 +45,7 @@ function SkinStep() {
     <Card className="relative flex h-[600px] w-11/12 max-w-3xl flex-col justify-between rounded-lg border">
       <FormHeader
         title="Como você descreveria sua pele?"
-        description="Por favor selecione até 5 opções que se aplicam para descrever sua pele da melhor forma"
+        description="Por favor selecione até 3 opções que descrevem sua pele da melhor forma"
       />
       <CardContent className="flex h-full flex-col p-4 md:p-6">
         <form
