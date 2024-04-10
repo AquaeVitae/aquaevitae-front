@@ -5,26 +5,44 @@ import { useFormContext } from "react-hook-form";
 
 import FormHeader from "./FormHeader";
 import FormFooter from "./FormFooter";
-import MultipleSelector, { Option } from "@/components/ui/multiple-selector";
 import { skinType } from "@/lib/formDictionary";
 import { toast } from "@/components/ui/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
 
 function SkinStep() {
   const { handleSubmit } = useFormContext<FormData>();
   const { onSubmit } = useFormState();
 
-  const SKIN_TYPE_OPTIONS: Option[] = Object.entries(skinType).map(
-    ([value, { pt: label }]) => ({
-      label: label,
-      value: label,
-      index: value,
-    }),
+  const SKIN_TYPE_OPTIONS: { label: string; value: string }[] = Object.entries(
+    skinType
+  ).map(([value, { pt: label }]) => ({
+    label: label,
+    value: label,
+    index: value,
+  }));
+
+  const [selectedSkinTypes, setSelectedSkinTypes] = React.useState<string[]>(
+    []
   );
 
-  const [skinTypeValue, setSkinTypeValue] = React.useState<Option[]>([]);
+  const handleCheckboxChange = (value: string) => {
+    setSelectedSkinTypes((prevSelected) => {
+      if (prevSelected.includes(value)) {
+        return prevSelected.filter((item) => item !== value);
+      } else {
+        if (prevSelected.length >= 5) {
+          toast({
+            title: "Você atingiu o limite de 5 opções",
+          });
+          return prevSelected;
+        }
+        return [...prevSelected, value];
+      }
+    });
+  };
 
   return (
-    <Card className="relative flex h-[500px] w-11/12 max-w-3xl flex-col justify-between rounded-lg border">
+    <Card className="relative flex h-[600px] w-11/12 max-w-3xl flex-col justify-between rounded-lg border">
       <FormHeader
         title="Como você descreveria sua pele?"
         description="Por favor selecione até 5 opções que se aplicam para descrever sua pele da melhor forma"
@@ -34,25 +52,25 @@ function SkinStep() {
           onSubmit={handleSubmit(onSubmit)}
           className="flex h-full flex-col justify-between"
         >
-          <div>
-            <MultipleSelector
-              value={skinTypeValue}
-              onChange={setSkinTypeValue}
-              defaultOptions={SKIN_TYPE_OPTIONS}
-              placeholder="Selecione todas as opções que se aplicam."
-              emptyIndicator={
-                <p className="text-center text-lg leading-10 text-gray-600 dark:text-gray-400">
-                  Não encontrado
-                </p>
-              }
-              maxSelected={5}
-              onMaxSelected={(maxLimit) => {
-                toast({
-                  title: `Você atingiu o limite de ${maxLimit} opções`,
-                });
-              }}
-              className="mt-4"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            {SKIN_TYPE_OPTIONS.map(({ label, value }) => (
+              <div
+                key={value}
+                className="flex items-center space-x-2 space-y-0"
+              >
+                <Checkbox
+                  id={value}
+                  checked={selectedSkinTypes.includes(value)}
+                  onCheckedChange={() => handleCheckboxChange(value)}
+                />
+                <label
+                  htmlFor={value}
+                  className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                >
+                  {label}
+                </label>
+              </div>
+            ))}
           </div>
         </form>
       </CardContent>

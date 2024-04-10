@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 function CameraStep() {
   const { handleSubmit } = useFormContext<FormData>();
   const { onSubmit } = useFormState();
-  const webcamRef = React.useRef(null);
+  const webcamRef = React.useRef<Webcam>(null);
   const [imageSrc, setImageSrc] = React.useState("");
 
   const videoConstraints = {
