@@ -8,7 +8,7 @@ function Header() {
       <div className="container flex h-14 max-w-screen-2xl items-center justify-between px-5 py-2">
         <Link to="/" className="flex items-center space-x-2">
           <img className="size-6" src="/logo.png" alt="Dermaform Logo" />
-          <h1 className="text-1xl font-bold">Plano de cuidado Aquaevitae</h1>
+          <h1 className="text-1xl font-bold">Aquaevitae Care Plan</h1>
         </Link>
         <div className="flex space-x-6 md:space-x-6">
           <Link

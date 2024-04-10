@@ -63,13 +63,13 @@ function SkinProblemsStep() {
           {skinDiseaseValue.map((option) => (
             <div key={option.value} className="mt-4 flex items-center gap-4">
               <span className="w-1/2 text-sm font-medium md:w-1/4">
-                {option.label}
+                Nível de {option.label}
               </span>
               <Slider
-                // defaultValue={[1]}
+                defaultValue={[1]}
                 max={3}
                 min={1}
-                // step={1}
+                step={1}
                 onValueChange={(value) => handleSliderChange(value[0], option)}
               />
               <span className="text-sm">
