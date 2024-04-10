@@ -27,7 +27,7 @@ function PrefillStep() {
     : "manual";
 
   return (
-    <Card className="relative flex h-[500px] w-11/12 max-w-3xl flex-col justify-between rounded-lg border">
+    <Card className="relative flex h-[600px] w-11/12 max-w-3xl flex-col justify-between rounded-lg border">
       <FormHeader
         title="Formulário de pele"
         description="Preencha um formulário e descubra os produtos mais indicados para cuidar da sua pele"

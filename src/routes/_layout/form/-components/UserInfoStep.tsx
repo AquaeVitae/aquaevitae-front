@@ -24,7 +24,7 @@ function UserInfoStep() {
   }, [name, age]);
 
   return (
-    <Card className="relative flex h-[500px] w-11/12 max-w-3xl flex-col justify-between rounded-lg border">
+    <Card className="relative flex h-[600px] w-11/12 max-w-3xl flex-col justify-between rounded-lg border">
       <FormHeader
         title="Receber resultado por email"
         description="Preencha as informações pessoais e também receba as indicações de produtos via e-mail"

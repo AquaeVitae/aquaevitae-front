@@ -35,7 +35,7 @@ function SkinProblemsStep() {
   };
 
   return (
-    <Card className="relative flex h-[500px] w-11/12 max-w-3xl flex-col justify-between rounded-lg border">
+    <Card className="relative flex h-[600px] w-11/12 max-w-3xl flex-col justify-between rounded-lg border">
       <FormHeader
         title="Patologias de pele"
         description="Selecione até 3 patologias de pele que você enfrenta e descreva o grau delas"
