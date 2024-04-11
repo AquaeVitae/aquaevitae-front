@@ -36,7 +36,7 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({
     prefill: true,
     confirmation: false,
     name: "",
-    age: 0,
+    age: NaN,
   });
 
   const methods = useForm<FormData>({

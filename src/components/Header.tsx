@@ -8,7 +8,7 @@ function Header() {
       <div className="container flex h-14 max-w-screen-2xl items-center justify-between px-5 py-2">
         <Link to="/" className="flex items-center space-x-2">
           <img className="size-6" src="/logo.png" alt="Dermaform Logo" />
-          <h1 className="text-1xl font-bold">Dermaform</h1>
+          <h1 className="text-1xl font-bold">Aquaevitae Care Plan</h1>
         </Link>
         <div className="flex space-x-6 md:space-x-6">
           <Link
@@ -26,7 +26,7 @@ function Header() {
             <span className="hidden md:inline">Formulário</span>
           </Link>
           <Link
-            to="/about"
+            to="/partnerships"
             className="flex flex-row items-center text-sm font-medium text-secondary-foreground transition-colors hover:text-muted-foreground"
           >
             <Handshake className="mr-0 h-5 w-5 md:mr-2" />

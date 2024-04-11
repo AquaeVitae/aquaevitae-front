@@ -15,6 +15,7 @@ import { Route as CameraImport } from './routes/camera'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
 import { Route as LayoutProductsIndexImport } from './routes/_layout/products/index'
+import { Route as LayoutPartnershipsIndexImport } from './routes/_layout/partnerships/index'
 import { Route as LayoutFormIndexImport } from './routes/_layout/form/index'
 
 // Create/Update Routes
@@ -36,6 +37,11 @@ const LayoutIndexRoute = LayoutIndexImport.update({
 
 const LayoutProductsIndexRoute = LayoutProductsIndexImport.update({
   path: '/products/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutPartnershipsIndexRoute = LayoutPartnershipsIndexImport.update({
+  path: '/partnerships/',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -64,6 +70,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutFormIndexImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/partnerships/': {
+      preLoaderRoute: typeof LayoutPartnershipsIndexImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/products/': {
       preLoaderRoute: typeof LayoutProductsIndexImport
       parentRoute: typeof LayoutImport
@@ -77,6 +87,7 @@ export const routeTree = rootRoute.addChildren([
   LayoutRoute.addChildren([
     LayoutIndexRoute,
     LayoutFormIndexRoute,
+    LayoutPartnershipsIndexRoute,
     LayoutProductsIndexRoute,
   ]),
   CameraRoute,
