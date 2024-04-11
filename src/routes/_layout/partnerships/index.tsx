@@ -21,19 +21,17 @@ import { useState } from "react";
 import {
   type CountryCallingCode,
   type E164Number,
-  getExampleNumber,
   parsePhoneNumber,
 } from "libphonenumber-js";
 import i18nIsoCountries from "i18n-iso-countries";
 import enCountries from "i18n-iso-countries/langs/en.json";
 import PhoneInput, { type Country } from "react-phone-number-input/input";
-import examples from "libphonenumber-js/mobile/examples";
 
+import language from "react-phone-number-input/locale/pt";
 import { ComboboxCountryInput } from "./-components/phone-input/combobox";
 import {
   getCountriesOptions,
   isoToEmoji,
-  replaceNumbersWithZeros,
 } from "./-components/phone-input/helpers";
 import { SelectCountry } from "./-components/country-select";
 
@@ -56,26 +54,27 @@ const partnershipSchema = z.object({
   agentRole: z.string(),
   message: z.string().min(1).max(1000),
   phone: z.string().refine(isValidPhoneNumber).or(z.literal("")),
-  selectedCountry: z.string(),
+  selectedCountry: z.string().max(2),
 });
 
 type PartnershipSchema = z.infer<typeof partnershipSchema>;
 
 function PartnershipsPage() {
-  const { handleSubmit, register, resetField, setValue, watch } = useForm<PartnershipSchema>({
-    resolver: zodResolver(partnershipSchema),
-  });
+  const { handleSubmit, register, resetField, setValue, watch } =
+    useForm<PartnershipSchema>({
+      resolver: zodResolver(partnershipSchema),
+    });
 
   const mutation = useMutation({
     mutationFn: (partnership: PartnershipSchema) => {
       return axios.post("partnerships/", {
         phone: partnership.phone,
-        companyName: partnership.companyName,
-        agentName: partnership.agentName,
-        agentRole: partnership.agentRole,
-        agentEmail: partnership.agentEmail,
-        selectedCountry: partnership.selectedCountry,
-        message: partnership.message,
+        company_name: partnership.companyName,
+        agent_fullname: partnership.agentName,
+        agent_role: partnership.agentRole,
+        agent_email: partnership.agentEmail,
+        country: partnership.selectedCountry,
+        agent_message: partnership.message,
       });
     },
     onSuccess: () => {
@@ -86,8 +85,11 @@ function PartnershipsPage() {
       resetField("message");
       resetField("phone");
       resetField("selectedCountry");
+      setPhoneNumber(undefined);
+      setSelectedCountry({} as CountryOption);
+      setCountry({} as CountryOption);
       toast({
-        title: "Muito obrigado por querer ser um de nossos parceiros!",
+        title: "Muito obrigado pelo interesse em ser um de nossos parceiros!",
         description: "Um agente entrará em contato em breve.",
       });
       mutation.reset();
@@ -107,28 +109,40 @@ function PartnershipsPage() {
   }
 
   const options = getCountriesOptions();
-  const defaultCountry = parsePhoneNumber("+55606060606")?.country;
-  const defaultCountryOption = options.find(
-    (option) => option.value === defaultCountry,
-  );
-  const [country, setCountry] = useState<CountryOption>(
-    defaultCountryOption || options[0]!,
-  );
+
+  const [country, setCountry] = useState<CountryOption>({} as CountryOption);
   const [selectedCountry, setSelectedCountry] = useState<CountryOption>(
-    options[1] || options[0]!,
+    {} as CountryOption,
   );
   const [phoneNumber, setPhoneNumber] = useState<E164Number>();
-  const placeholder = replaceNumbersWithZeros(
-    getExampleNumber(country.value, examples)!.formatInternational(),
-  );
+
   const onCountryChange = (value: CountryOption) => {
     setPhoneNumber(undefined);
     setCountry(value);
-    setValue("selectedCountry", value.label);
   };
+
+  const onPhoneChange = (value: E164Number) => {
+    setPhoneNumber(value);
+    setValue("phone", value);
+
+    try {
+      const writedCountry = parsePhoneNumber(value)?.country;
+
+      if (writedCountry) {
+        setCountry(
+          options.find(
+            (option) => option.value === writedCountry,
+          ) as CountryOption,
+        );
+      }
+    } catch {
+      return;
+    }
+  };
+
   const onSelectedCountryChange = (value: CountryOption) => {
     setSelectedCountry(value);
-    setValue("selectedCountry", value.label);
+    setValue("selectedCountry", value.value);
   };
 
   watch("selectedCountry");
@@ -162,9 +176,8 @@ function PartnershipsPage() {
                 value={selectedCountry}
                 onValueChange={onSelectedCountryChange}
                 options={options}
-                renderOption={({ option }) => `${option.label}`}
-                renderValue={(option) => option.label}
-                emptyMessage="No country found."
+                renderValue={(option) => language[option.value]}
+                emptyMessage="Não encontrado."
               />
             </div>
             <Input
@@ -184,22 +197,27 @@ function PartnershipsPage() {
                   value={country}
                   onValueChange={onCountryChange}
                   options={options}
-                  placeholder="Find your country..."
+                  placeholder="Digite seu país..."
                   renderOption={({ option }) =>
                     `${isoToEmoji(option.value)} ${option.label}`
                   }
-                  renderValue={(option) => option.label}
-                  emptyMessage="No country found."
+                  renderValue={(option) => language[option.value]}
+                  emptyMessage="Não encontrado."
                 />
                 <PhoneInput
-                  international
-                  withCountryCallingCode
-                  country={country.value.toUpperCase() as Country}
+                  international={true}
+                  withCountryCallingCode={true}
+                  country={
+                    (country.value
+                      ? country?.value.toUpperCase()
+                      : null) as Country
+                  }
                   value={phoneNumber}
                   inputComponent={Input}
-                  placeholder={placeholder}
+                  placeholder="Seu número de telefone"
+                  labels={language}
                   onChange={(value) => {
-                    setPhoneNumber(value);
+                    onPhoneChange(value as E164Number);
                   }}
                 />
               </div>
@@ -210,7 +228,7 @@ function PartnershipsPage() {
               {...register("agentRole")}
             />
             <Textarea
-              placeholder="Escreva como seus produtos fazem sentido com o projeto Aquaevitae ;)"
+              placeholder="Descreva como seus produtos fazem sentido com o projeto Aquaevitae ;)"
               className="h-full min-h-max resize-none md:max-h-full"
               maxLength={1000}
               {...register("message")}
@@ -223,4 +241,5 @@ function PartnershipsPage() {
     </div>
   );
 }
+
 export default PartnershipsPage;

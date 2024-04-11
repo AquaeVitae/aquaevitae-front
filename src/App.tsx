@@ -9,8 +9,8 @@ import axios from "axios";
 
 const router = createRouter({ routeTree });
 const queryClient = new QueryClient()
-// axios.defaults.baseURL = 'http://aquaevitae1.ipb.pt/api/v1/';
-axios.defaults.baseURL = 'http://127.0.0.1:8000/v1/';
+
+axios.defaults.baseURL = process.env.API_URL || 'http://127.0.0.1:8000/v1/';
 
 function App() {
   return (
