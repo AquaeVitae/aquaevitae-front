@@ -14,7 +14,10 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { isoToEmoji } from "./helpers";
+import { CountryCode } from "libphonenumber-js";
+import { FlagProps } from "react-phone-number-input";
+import flags from "react-phone-number-input/flags";
+import language from "react-phone-number-input/locale/pt";
 
 export type Option = Record<"value" | "label", string> & Record<string, string>;
 
@@ -39,7 +42,6 @@ export function ComboboxCountryInput<T extends Option>({
   value,
   onValueChange,
   options,
-  renderOption,
   renderValue,
   placeholder,
   emptyMessage,
@@ -53,11 +55,14 @@ export function ComboboxCountryInput<T extends Option>({
           role="combobox"
           aria-expanded={open}
           aria-label={
-            value.value ? `Selected: ${renderValue(value)}` : "Select contry"
+            value.value ? `Selected: ${renderValue(value)}` : "Escolha um país"
           }
           className="inline-flex h-10 items-center justify-between self-start rounded-md border border-stone-200 bg-white px-4 py-2 text-sm font-medium ring-offset-white transition-colors hover:bg-stone-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 "
         >
-          {value.value ? isoToEmoji(value.value) : "Select contry..."}
+          <FlagComponent
+            country={value.value as CountryCode}
+            countryName={value.value}
+          />
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </button>
       </PopoverTrigger>
@@ -78,9 +83,16 @@ export function ComboboxCountryInput<T extends Option>({
                       onValueChange(option);
                       setOpen(false);
                     }}
-                    aria-disabled={true} // Explicitly set as string
+                    className="gap-2"
+                    aria-disabled={true}
                   >
-                    {renderOption({ option, isSelected })}
+                    <FlagComponent
+                      country={option.value as CountryCode}
+                      countryName={option.value}
+                    />
+                    <span className="flex-1 text-sm">
+                      {language[option.value as CountryCode]}
+                    </span>
                     {isSelected ? (
                       <Check className="ml-auto mr-2 h-4 w-4" />
                     ) : null}
@@ -94,3 +106,14 @@ export function ComboboxCountryInput<T extends Option>({
     </Popover>
   );
 }
+
+export const FlagComponent = ({ country, countryName }: FlagProps) => {
+  const Flag = flags[country];
+
+  return (
+    <span className="flex h-4 w-6 overflow-hidden rounded-sm bg-foreground/20">
+      {Flag && <Flag title={countryName} />}
+    </span>
+  );
+};
+FlagComponent.displayName = "FlagComponent";
