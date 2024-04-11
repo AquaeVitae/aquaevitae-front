@@ -16,7 +16,7 @@ import { isValidPhoneNumber } from "react-phone-number-input";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
-import React, { useState } from "react";
+import { useState } from "react";
 
 import {
   type CountryCallingCode,
@@ -68,7 +68,15 @@ function PartnershipsPage() {
 
   const mutation = useMutation({
     mutationFn: (partnership: PartnershipSchema) => {
-      return axios.post("partnerships/", partnership);
+      return axios.post("partnerships/", {
+        phone: partnership.phone,
+        companyName: partnership.companyName,
+        agentName: partnership.agentName,
+        agentRole: partnership.agentRole,
+        agentEmail: partnership.agentEmail,
+        selectedCountry: partnership.selectedCountry,
+        message: partnership.message,
+      });
     },
     onSuccess: () => {
       resetField("companyName");
@@ -95,15 +103,7 @@ function PartnershipsPage() {
   });
 
   function submitPartnershipForm(data: PartnershipSchema) {
-    mutation.mutate({
-      phone: data.phone,
-      company_name: data.companyName,
-      agent_fullname: data.agentName,
-      agent_role: data.agentRole,
-      agent_email: data.agentEmail,
-      country: data.selectedCountry,
-      agent_message: data.message,
-    });
+    mutation.mutate(data);
   }
 
   const options = getCountriesOptions();
