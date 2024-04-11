@@ -52,7 +52,7 @@ export function SelectCountry<T extends Option>({
           className="inline-flex h-10 w-full items-center justify-between self-start rounded-md border border-stone-200 bg-white px-4 py-2 text-sm font-medium ring-offset-white transition-colors hover:bg-stone-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 md:w-2/5 "
         >
           {value.value ? (
-            <>
+            <div className="flex flex-row items-center gap-2">
               <FlagComponent
                 country={value.value as CountryCode}
                 countryName={value.value}
@@ -61,7 +61,7 @@ export function SelectCountry<T extends Option>({
               <span className="font-normal">
                 {language[value.value as CountryCode]}
               </span>
-            </>
+            </div>
           ) : (
             <span className="font-normal text-gray-600">
               País da sua empresa
