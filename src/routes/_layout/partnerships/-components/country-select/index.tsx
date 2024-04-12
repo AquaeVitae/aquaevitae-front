@@ -55,7 +55,7 @@ export function SelectCountry<T extends Option>({
           {...register}
         >
           {value.value ? (
-            <>
+            <div className="flex flex-row items-center gap-2">
               <FlagComponent
                 country={value.value as CountryCode}
                 countryName={value.value}
@@ -64,7 +64,7 @@ export function SelectCountry<T extends Option>({
               <span className="font-normal">
                 {language[value.value as CountryCode]}
               </span>
-            </>
+            </div>
           ) : (
             <span className="font-normal text-gray-600">
               País da sua empresa*
