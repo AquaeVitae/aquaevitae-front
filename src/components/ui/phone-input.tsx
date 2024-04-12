@@ -21,7 +21,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import ptbr from 'react-phone-number-input/locale/pt-BR'
+import locale from "react-phone-number-input/locale/pt";
 import { cn } from "@/lib/utils";
 
 type PhoneInputProps = Omit<
@@ -29,7 +29,7 @@ type PhoneInputProps = Omit<
   "onChange" | "value"
 > &
   Omit<RPNInput.Props<typeof RPNInput.default>, "onChange"> & {
-    onChange?: (value: RPNInput.Value) => void;
+    onChange?: ((value: RPNInput.Value) => void) | any;
   };
 
 const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
@@ -42,7 +42,8 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
           flagComponent={FlagComponent}
           countrySelectComponent={CountrySelect}
           inputComponent={InputComponent}
-          labels={ptbr}
+          labels={locale}
+          withCountryCallingCode={true}
           /**
            * Handles the onChange event.
            *
@@ -63,7 +64,7 @@ PhoneInput.displayName = "PhoneInput";
 const InputComponent = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, ...props }, ref) => (
     <Input
-      className={cn("rounded-s-none rounded-e-lg", className)}
+      className={cn("rounded-e-lg rounded-s-none", className)}
       {...props}
       ref={ref}
     />
@@ -99,8 +100,9 @@ const CountrySelect = ({
         <Button
           type="button"
           variant={"outline"}
-          className={cn("flex gap-1 rounded-e-none rounded-s-lg pr-1 pl-3")}
-          disabled={disabled}>
+          className={cn("flex gap-1 rounded-e-none rounded-s-lg pl-3 pr-1")}
+          disabled={disabled}
+        >
           <FlagComponent country={value} countryName={value} />
           <ChevronsUpDown
             className={cn(
@@ -110,7 +112,7 @@ const CountrySelect = ({
           />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="p-0 w-[300px]">
+      <PopoverContent className="w-[300px] p-0">
         <Command>
           <CommandList>
             <CommandInput placeholder="Digite o país..." />
@@ -122,12 +124,13 @@ const CountrySelect = ({
                   <CommandItem
                     className="gap-2"
                     key={option.value}
-                    onSelect={() => handleSelect(option.value)}>
+                    onSelect={() => handleSelect(option.value)}
+                  >
                     <FlagComponent
                       country={option.value}
                       countryName={option.label}
                     />
-                    <span className="text-sm flex-1">{option.label}</span>
+                    <span className="flex-1 text-sm">{option.label}</span>
                     {option.value && (
                       <span className="text-sm text-foreground/50">
                         {`+${RPNInput.getCountryCallingCode(option.value)}`}

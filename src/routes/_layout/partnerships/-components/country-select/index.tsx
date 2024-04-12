@@ -17,7 +17,7 @@ import {
 import { FlagComponent } from "../phone-input/combobox";
 import language from "react-phone-number-input/locale/pt";
 import { CountryCode } from "libphonenumber-js";
-
+import { type UseFormRegisterReturn } from "react-hook-form";
 export type Option = Record<"value" | "label", string> & Record<string, string>;
 
 type ComboboxCountryInputProps<T extends Option> = {
@@ -28,12 +28,14 @@ type ComboboxCountryInputProps<T extends Option> = {
   emptyMessage: string;
   placeholder?: string;
   className?: string;
+  register: UseFormRegisterReturn;
 };
 
 export function SelectCountry<T extends Option>({
   value,
   onValueChange,
   options,
+  register,
   renderValue,
   placeholder,
   emptyMessage,
@@ -49,7 +51,8 @@ export function SelectCountry<T extends Option>({
           aria-label={
             value.value ? `Selected: ${renderValue(value)}` : "Select country"
           }
-          className="inline-flex h-10 w-full items-center justify-between self-start rounded-md border border-stone-200 bg-white px-4 py-2 text-sm font-medium ring-offset-white transition-colors hover:bg-stone-100 hover:text-slate-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 md:w-2/5 "
+          className="inline-flex h-10 w-full items-center justify-between self-start rounded-md border border-stone-200 bg-white px-4 py-2 text-sm font-medium ring-offset-white transition-colors hover:bg-stone-100 hover:text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 md:w-2/5 "
+          {...register}
         >
           {value.value ? (
             <div className="flex flex-row items-center gap-2">
@@ -64,7 +67,7 @@ export function SelectCountry<T extends Option>({
             </div>
           ) : (
             <span className="font-normal text-gray-600">
-              País da sua empresa
+              País da sua empresa*
             </span>
           )}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -76,6 +79,19 @@ export function SelectCountry<T extends Option>({
           <CommandEmpty>{emptyMessage}</CommandEmpty>
           <CommandList>
             <CommandGroup className="mt-2 h-full max-h-48 overflow-auto p-0 [&_div[cmdk-group-items]]:flex [&_div[cmdk-group-items]]:flex-col [&_div[cmdk-group-items]]:gap-1">
+              <CommandItem
+                key="ZZ"
+                value=""
+                onSelect={() => {
+                  onValueChange({} as T);
+                  setOpen(false);
+                }}
+                className="gap-2"
+                aria-disabled={true}
+              >
+                <FlagComponent country={{} as CountryCode} countryName={""} />
+                <span className="flex-1 text-sm">--</span>
+              </CommandItem>
               {options.map((option) => {
                 const isSelected = value.value === option.value;
 

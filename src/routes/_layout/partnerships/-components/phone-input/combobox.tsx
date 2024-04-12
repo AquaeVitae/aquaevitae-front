@@ -72,6 +72,19 @@ export function ComboboxCountryInput<T extends Option>({
           <CommandEmpty>{emptyMessage}</CommandEmpty>
           <CommandList>
             <CommandGroup className="mt-2 h-full max-h-48 overflow-auto p-0 [&_div[cmdk-group-items]]:flex [&_div[cmdk-group-items]]:flex-col [&_div[cmdk-group-items]]:gap-1">
+              <CommandItem
+                key="ZZ"
+                value=""
+                onSelect={() => {
+                  onValueChange({} as T);
+                  setOpen(false);
+                }}
+                className="gap-2"
+                aria-disabled={true}
+              >
+                <FlagComponent country={{} as CountryCode} countryName={""} />
+                <span className="flex-1 text-sm">--</span>
+              </CommandItem>
               {options.map((option) => {
                 const isSelected = value.value === option.value;
 
