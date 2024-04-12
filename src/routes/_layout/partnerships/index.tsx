@@ -117,7 +117,7 @@ function PartnershipsPage() {
 
   return (
     <div className="z-40 flex h-full w-full flex-col items-center justify-center">
-      <Card className="relative flex h-[600px] w-11/12 max-w-3xl flex-col justify-between rounded-lg border md:h-[600px]">
+      <Card className="relative flex h-[650px] w-11/12 max-w-3xl flex-col justify-between rounded-lg border md:h-[600px]">
         <CardHeader className="p-4 md:p-6">
           <CardTitle className="text-xl md:text-3xl">
             Seja um dos nossos parceiros!
