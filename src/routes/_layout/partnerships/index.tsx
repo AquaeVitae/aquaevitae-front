@@ -18,21 +18,15 @@ import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
 import { useState } from "react";
 
-import {
-  type CountryCallingCode,
-  type E164Number,
-  parsePhoneNumber,
-} from "libphonenumber-js";
+import { type CountryCallingCode } from "libphonenumber-js";
 import i18nIsoCountries from "i18n-iso-countries";
 import enCountries from "i18n-iso-countries/langs/en.json";
-import PhoneInput, { type Country } from "react-phone-number-input/input";
+import { type Country } from "react-phone-number-input/input";
+
+import { PhoneInput } from "@/components/ui/phone-input";
 
 import language from "react-phone-number-input/locale/pt";
-import { ComboboxCountryInput } from "./-components/phone-input/combobox";
-import {
-  getCountriesOptions,
-  isoToEmoji,
-} from "./-components/phone-input/helpers";
+import { getCountriesOptions } from "./-components/phone-input/helpers";
 import { SelectCountry } from "./-components/country-select";
 
 type CountryOption = {
@@ -54,7 +48,7 @@ const partnershipSchema = z.object({
   agentRole: z.string(),
   message: z.string().min(1).max(1000),
   phone: z.string().refine(isValidPhoneNumber).or(z.literal("")),
-  selectedCountry: z.string().max(2),
+  selectedCountry: z.string().min(1).max(2),
 });
 
 type PartnershipSchema = z.infer<typeof partnershipSchema>;
@@ -84,10 +78,9 @@ function PartnershipsPage() {
       resetField("agentRole");
       resetField("message");
       resetField("phone");
+      setTmpPhone("");
       resetField("selectedCountry");
-      setPhoneNumber(undefined);
       setSelectedCountry({} as CountryOption);
-      setCountry({} as CountryOption);
       toast({
         title: "Muito obrigado pelo interesse em ser um de nossos parceiros!",
         description: "Um agente entrará em contato em breve.",
@@ -110,42 +103,17 @@ function PartnershipsPage() {
 
   const options = getCountriesOptions();
 
-  const [country, setCountry] = useState<CountryOption>({} as CountryOption);
   const [selectedCountry, setSelectedCountry] = useState<CountryOption>(
     {} as CountryOption,
   );
-  const [phoneNumber, setPhoneNumber] = useState<E164Number>();
 
-  const onCountryChange = (value: CountryOption) => {
-    setPhoneNumber(undefined);
-    setCountry(value);
-  };
-
-  const onPhoneChange = (value: E164Number) => {
-    setPhoneNumber(value);
-    setValue("phone", value);
-
-    try {
-      const writedCountry = parsePhoneNumber(value)?.country;
-
-      if (writedCountry) {
-        setCountry(
-          options.find(
-            (option) => option.value === writedCountry,
-          ) as CountryOption,
-        );
-      }
-    } catch {
-      return;
-    }
-  };
-
+  const [tmpPhone, setTmpPhone] = useState("");
   const onSelectedCountryChange = (value: CountryOption) => {
     setSelectedCountry(value);
     setValue("selectedCountry", value.value);
   };
 
-  watch("selectedCountry");
+  watch("selectedCountry", "");
 
   return (
     <div className="z-40 flex h-full w-full flex-col items-center justify-center">
@@ -178,6 +146,7 @@ function PartnershipsPage() {
                 options={options}
                 renderValue={(option) => language[option.value]}
                 emptyMessage="Não encontrado."
+                register={register("selectedCountry")}
               />
             </div>
             <Input
@@ -192,35 +161,17 @@ function PartnershipsPage() {
                 className="w-full md:w-3/5"
                 {...register("agentEmail")}
               />
-              <div className="flex flex-grow gap-1 md:w-2/5">
-                <ComboboxCountryInput
-                  value={country}
-                  onValueChange={onCountryChange}
-                  options={options}
-                  placeholder="Digite seu país..."
-                  renderOption={({ option }) =>
-                    `${isoToEmoji(option.value)} ${option.label}`
-                  }
-                  renderValue={(option) => language[option.value]}
-                  emptyMessage="Não encontrado."
-                />
-                <PhoneInput
-                  international={true}
-                  withCountryCallingCode={true}
-                  country={
-                    (country.value
-                      ? country?.value.toUpperCase()
-                      : null) as Country
-                  }
-                  value={phoneNumber}
-                  inputComponent={Input}
-                  placeholder="Seu número de telefone"
-                  labels={language}
-                  onChange={(value) => {
-                    onPhoneChange(value as E164Number);
-                  }}
-                />
-              </div>
+              <PhoneInput
+                className="w-full md:w-2/5"
+                international={true}
+                placeholder="Seu número de telefone"
+                value={tmpPhone}
+                {...register("phone")}
+                onChange={(v: any) => {
+                  setValue("phone", v);
+                  setTmpPhone(v);
+                }}
+              />
             </div>
             <Input
               type="text"
