@@ -84,7 +84,7 @@ function SkinProblemsStep() {
             .sort((a, b) => (a.value > b.value ? 1 : -1))
             .map((option) => (
               <div key={option.value} className="mt-4 flex items-center gap-4">
-                <span className="w-1/5 text-xs font-medium md:w-1/2 md:w-1/4 md:text-sm">
+                <span className="w-2/5 text-xs font-medium md:w-1/3 md:text-sm">
                   Nível de {option.label}
                 </span>
                 <Slider

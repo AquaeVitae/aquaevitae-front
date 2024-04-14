@@ -94,6 +94,7 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({
     },
     onError: () => {
       toast({
+        variant: "destructive",
         title: "Algo deu errado :(",
         description:
           "Por favor tente novamente mais tarde ou entre em contato com um dos nossos administradores.",
