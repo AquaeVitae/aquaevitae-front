@@ -1,5 +1,5 @@
 import { Card, CardContent } from "@/components/ui/card";
-import React from "react";
+import React, { useEffect } from "react";
 import { FormData, useFormState } from "./FormContext";
 import { useFormContext } from "react-hook-form";
 
@@ -11,40 +11,59 @@ import { toast } from "@/components/ui/use-toast";
 import { Slider } from "@/components/ui/slider";
 
 function SkinProblemsStep() {
-  const { handleSubmit } = useFormContext<FormData>();
-  const { onSubmit } = useFormState();
+  const { handleSubmit, setValue } = useFormContext<FormData>();
+  const { onSubmit, setSkinDiseases, skinDiseases, setFormData } =
+    useFormState();
 
   const SKIN_DISEASE_OPTIONS: Option[] = Object.entries(skinDisease).map(
     ([value, { pt: label }]) => ({
-      label: label,
-      value: label,
-      index: value,
+      label,
+      value,
     }),
   );
 
+  const MAP_LEVEL = ["Baixo", "Médio", "Alto"];
+
   const [skinDiseaseValue, setSkinDiseaseValue] = React.useState<Option[]>([]);
-  const [skinDiseaseIntensity, setSkinDiseaseIntensity] = React.useState<
-    Record<string, number>
-  >({});
 
   const handleSliderChange = (value: number, option: Option) => {
-    setSkinDiseaseIntensity((prevState) => ({
+    setSkinDiseases((prevState) => ({
       ...prevState,
       [option.value]: value,
     }));
   };
 
+  useEffect(() => {
+    const tempDiseases: Option[] = [];
+    for (let k in skinDiseases) {
+      tempDiseases.push(
+        SKIN_DISEASE_OPTIONS.find((value) => value.value === k) as Option,
+      );
+    }
+    setSkinDiseaseValue(tempDiseases);
+  }, []);
+
+  useEffect(() => {
+    setFormData({ skinDiseases });
+    setValue("skinDiseases", skinDiseases);
+  }, [skinDiseases]);
+
   return (
     <Card className="relative flex h-[600px] w-11/12 max-w-3xl flex-col justify-between rounded-lg border">
       <FormHeader
-        title="Patologias de pele"
-        description="Selecione até 5 patologias de pele que você enfrenta e o seu grau:"
+        title="Principais patologias da sua pele"
+        description="Selecione até 5 problemas que sua pele enfrenta e o seu grau:"
       />
       <CardContent className="flex h-full flex-col p-4 md:p-6">
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
           <MultipleSelector
             value={skinDiseaseValue}
-            onChange={setSkinDiseaseValue}
+            onChange={(vs) => {
+              setSkinDiseaseValue(vs);
+              const tmp: Record<string, number> = {};
+              vs.map((v) => (tmp[v.value] = skinDiseases[v.value] | 1));
+              setSkinDiseases(tmp);
+            }}
             defaultOptions={SKIN_DISEASE_OPTIONS}
             placeholder="Selecione todas as opções que se aplicam."
             emptyIndicator={
@@ -53,6 +72,7 @@ function SkinProblemsStep() {
               </p>
             }
             className="mt-4"
+            hidePlaceholderWhenSelected={true}
             maxSelected={5}
             onMaxSelected={(maxLimit) => {
               toast({
@@ -60,26 +80,35 @@ function SkinProblemsStep() {
               });
             }}
           />
-          {skinDiseaseValue.map((option) => (
-            <div key={option.value} className="mt-4 flex items-center gap-4">
-              <span className="w-1/2 text-sm font-medium md:w-1/4">
-                Nível de {option.label}
-              </span>
-              <Slider
-                defaultValue={[1]}
-                max={3}
-                min={1}
-                step={1}
-                onValueChange={(value) => handleSliderChange(value[0], option)}
-              />
-              <span className="text-sm">
-                {skinDiseaseIntensity[option.value] || "Baixo"}
-              </span>
-            </div>
-          ))}
+          {skinDiseaseValue
+            .sort((a, b) => (a.value > b.value ? 1 : -1))
+            .map((option) => (
+              <div key={option.value} className="mt-4 flex items-center gap-4">
+                <span className="w-2/5 text-xs font-medium md:w-1/3 md:text-sm">
+                  Nível de {option.label}
+                </span>
+                <Slider
+                  defaultValue={[skinDiseases[option.value]]}
+                  max={3}
+                  min={1}
+                  step={1}
+                  className="w-7/12 md:w-full"
+                  onValueChange={(value) =>
+                    handleSliderChange(value[0], option)
+                  }
+                />
+                <span className="text-sm md:w-1/12">
+                  {MAP_LEVEL[skinDiseases[option.value] - 1]}
+                </span>
+              </div>
+            ))}
         </form>
       </CardContent>
-      <FormFooter />
+      <FormFooter
+        nextStep={4}
+        disableContinue={skinDiseaseValue.length == 0}
+        fieldsToValidate={["skinDiseases"]}
+      />
     </Card>
   );
 }
