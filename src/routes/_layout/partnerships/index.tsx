@@ -89,6 +89,7 @@ function PartnershipsPage() {
     },
     onError: () => {
       toast({
+        variant: "destructive",
         title: "Algo deu errado :(",
         description:
           "Por favor tente novamente ou entre em contato com um dos nossos administradores.",
