@@ -9,6 +9,7 @@ interface FormFooterProps {
   hideContinue?: boolean;
   disableBack?: boolean;
   disableContinue?: boolean;
+  nextStep: number;
   onHandleBack?: () => void;
   onHandleNext?: () => void;
   fieldsToValidate?: string[];
@@ -21,14 +22,15 @@ function FormFooter({
   disableContinue,
   onHandleBack,
   onHandleNext,
+  nextStep,
   fieldsToValidate = [],
 }: FormFooterProps) {
-  const { step, setStep, formData } = useFormState();
+  const { step, setStep, onSubmit, formData } = useFormState();
   const { trigger } = useFormContext();
   const router = useRouter();
 
   const handleBack = () => {
-    if (step > 0) {
+    if (step != 2) {
       setStep(step - 1);
     } else if (window.history.length > 1) {
       router.history.back();
@@ -41,8 +43,11 @@ function FormFooter({
   const handleNext = async () => {
     const isValid = await trigger(fieldsToValidate);
     if (isValid) {
-      console.log(formData);
-      setStep(step + 1);
+      if (step === 4) {
+        onSubmit(formData);
+      } else {
+        setStep(nextStep);
+      }
       onHandleNext?.();
     }
   };
@@ -59,7 +64,7 @@ function FormFooter({
           className="left-0 mr-auto"
           onClick={handleBack}
         >
-          Voltar
+          {step === 0 ? "Sair" : "Voltar"}
         </Button>
       )}
       {!hideContinue && (
@@ -73,7 +78,7 @@ function FormFooter({
           className="ml-auto mr-0"
           onClick={handleNext}
         >
-          Continuar
+          {step === 4 ? "Enviar" : "Continuar"}
         </Button>
       )}
     </div>

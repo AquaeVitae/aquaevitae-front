@@ -86,7 +86,7 @@ function CameraStep() {
           </div>
         </form>
       </CardContent>
-      <FormFooter />
+      <FormFooter nextStep={2} />
     </Card>
   );
 }
