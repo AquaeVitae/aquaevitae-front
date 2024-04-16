@@ -4,6 +4,7 @@ import {
   useState,
   type SetStateAction,
   Dispatch,
+  useEffect,
 } from "react";
 import {
   useForm,
@@ -13,9 +14,10 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "@/components/ui/use-toast";
+import { FormLoading } from "./FormLoading";
 
 const schema = z.object({
   prefill: z.boolean(),
@@ -24,8 +26,13 @@ const schema = z.object({
   name: z.string().min(1, "Por favor informe seu nome."),
   skinTypes: z.array(z.string().min(1).max(2)).min(1).max(3),
   skinDiseases: z.record(z.string().min(1).max(2), z.number().min(1).max(3)),
-  age: z.number().min(8, "Idade inválida.").max(110, "Idade inválida."),
+  age: z
+    .number()
+    .min(8, "Idade inválida.")
+    .max(110, "Idade inválida.")
+    .default(NaN),
   email: z.string().email("E-mail Invalido").or(z.literal("")),
+  facialAnalysis: z.string().uuid().or(z.literal("")),
 });
 
 export type FormData = z.infer<typeof schema>;
@@ -62,7 +69,29 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({
     email: "",
     skinDiseases: {},
     skinTypes: [],
+    facialAnalysis: "",
   });
+
+  const getAnalysisDetails = async ({ queryKey }: any) => {
+    const [_key, analysisId] = queryKey;
+
+    const data = await axios.get(`analysis/${analysisId}/`);
+
+    if (!data.data.is_done) {
+      throw new Error("Analysis not done!");
+    }
+
+    var serializedDiseases = {};
+
+    data.data.predictions.map((disease: any) => {
+      if (disease[Object.keys(disease)[0]] !== 0)
+        serializedDiseases = { ...serializedDiseases, ...disease };
+    });
+
+    setSkinDiseases(serializedDiseases);
+
+    return data.data;
+  };
 
   const mutation = useMutation({
     mutationFn: (formData: FormData) => {
@@ -82,7 +111,7 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({
         user_name: formData.name,
         skin_diseases: serializedDiseases,
         autorized: formData.confirmation,
-        facial_analyzis: "",
+        facial_analyzis: formData.facialAnalysis,
       });
     },
     onSuccess: (data) => {
@@ -106,6 +135,8 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({
   const router = useRouter();
 
   const methods = useForm<FormData>({
+    mode: "onSubmit",
+    reValidateMode: "onSubmit",
     defaultValues: formData,
     resolver: zodResolver(schema),
   });
@@ -118,6 +149,41 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({
   const updateFormData = (data: Partial<FormData>) => {
     setFormData((prevData) => ({ ...prevData, ...data }));
   };
+
+  const { isPending, isError, isSuccess, refetch } = useQuery({
+    queryKey: ["analysis", formData.facialAnalysis],
+    queryFn: getAnalysisDetails,
+    retry: 30,
+    retryOnMount: false,
+    retryDelay: 1000,
+    enabled: false,
+  });
+
+  useEffect(() => {
+    if (formData.facialAnalysis) {
+      refetch();
+    }
+  }, [formData.facialAnalysis]);
+
+  useEffect(() => {
+    if (isError && step === 3 && !isSuccess) {
+      toast({
+        title: "Algo deu errado com a sua foto :(",
+        description:
+          "Infelizmente não foi possivel extrair suas informaçoes automaticamente.",
+      });
+      return;
+    }
+    if (!isError && step === 3 && isSuccess) {
+      toast({
+        duration: 10000,
+        title: "Suas informações foram prépreenchidas!",
+        description:
+          "Alguns dados foram preenchidos apartir da sua foto. Sinta-se livre para mudar o que não concordar ou adicionar novas patologias!",
+      });
+      return;
+    }
+  }, [isError, step, isSuccess]);
 
   return (
     <FormContext.Provider
@@ -135,7 +201,9 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({
         setSkinDiseases,
       }}
     >
-      <RHFProvider {...methods}>{children}</RHFProvider>
+      <RHFProvider {...methods}>
+        {isPending && step === 3 ? <FormLoading /> : children}
+      </RHFProvider>
     </FormContext.Provider>
   );
 };

@@ -30,7 +30,7 @@ function FormFooter({
   const router = useRouter();
 
   const handleBack = () => {
-    if (step != 2) {
+    if (step != 2 && step != 0) {
       setStep(step - 1);
     } else if (window.history.length > 1) {
       router.history.back();
