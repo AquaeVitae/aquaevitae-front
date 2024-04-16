@@ -97,7 +97,6 @@ function CameraStep() {
   })
 
   React.useEffect(() => {
-    console.log(facesDetected, boundingBox)
     if (facesDetected === 1 && boundingBox) {
       const videoWidth = webcamRef.current?.video?.videoWidth ? webcamRef.current?.video?.videoWidth : 0;
       const videoHeight = webcamRef.current?.video?.videoHeight ? webcamRef.current?.video?.videoHeight : 0;
