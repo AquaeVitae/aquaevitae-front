@@ -6,17 +6,17 @@ import { useMutation } from "@tanstack/react-query";
 
 import { Camera, type CameraOptions } from "@mediapipe/camera_utils";
 import {
-  FaceDetection,
-  type InputImage,
-  type NormalizedRect,
-} from "@mediapipe/face_detection";
-import { toast } from "@/components/ui/use-toast";
+  FaceDetector,
+  type BoundingBox,
+  FilesetResolver,
+} from "@mediapipe/tasks-vision";
 
 import FormHeader from "./FormHeader";
 import FormFooter from "./FormFooter";
 
 import Webcam from "react-webcam";
 import axios from "axios";
+import { toast } from "@/components/ui/use-toast";
 
 import React from "react";
 import { CameraIcon, TrashIcon } from "lucide-react";
@@ -32,8 +32,8 @@ function CameraStep() {
   const [isLoading, setIsLoading] = React.useState(true);
   const [understood, setUnderstood] = React.useState(false);
   const [facesDetected, setFacesDetected] = React.useState(0);
-  const [boundingBox, setBoundingBox] = React.useState<NormalizedRect>();
-  const [faceDetection, setFaceDetection] = React.useState<FaceDetection>();
+  const [boundingBox, setBoundingBox] = React.useState<BoundingBox>();
+  const [faceDetection, setFaceDetection] = React.useState<FaceDetector>();
   const [isBigEnough, setIsBigEnough] = React.useState(false);
 
   const [camera, setCamera] = React.useState<Camera>();
@@ -63,45 +63,46 @@ function CameraStep() {
     }
   }, [webcamRef, setImageSrc, imageSrc, camera]);
 
-  var pictureLandmarks: any;
   React.useEffect(() => {
-    const faceDetection = new FaceDetection({
-      locateFile: (file) =>
-        `https://cdn.jsdelivr.net/npm/@mediapipe/face_detection/${file}`,
-    });
-
-    faceDetection.setOptions({
-      model: "short",
-      minDetectionConfidence: 0.85,
-    });
-
-    faceDetection.onResults((results) => {
-      setFacesDetected(results.detections.length);
-      results.detections[0] &&
-        setBoundingBox(results.detections[0].boundingBox);
-      pictureLandmarks = results.detections[0]
-        ? results.detections[0].landmarks
-        : pictureLandmarks;
-      setIsLoading(false);
-    });
-    setFaceDetection(faceDetection);
+    const loadFaceDectector = async () => {
+      const vision = await FilesetResolver.forVisionTasks(
+        "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm",
+      );
+      const faceDetection = await FaceDetector.createFromOptions(vision, {
+        minDetectionConfidence: 0.85,
+        runningMode: "VIDEO",
+        baseOptions: {
+          delegate: "CPU",
+          modelAssetPath:
+            "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite",
+        },
+      });
+      setFaceDetection(faceDetection);
+    };
+    loadFaceDectector();
   }, []);
 
-  React.useEffect(()=>{
+  React.useEffect(() => {
     return () => {
-      camera?.stop()
-    }
-  },[camera])
+      camera?.stop();
+    };
+  }, [camera]);
 
   React.useEffect(() => {
-    if (faceDetection && !camera && understood) {
+    if (faceDetection && !camera) {
       const camera = new Camera(
         webcamRef?.current?.video as HTMLVideoElement,
         {
-          onFrame: async () => {
-            await faceDetection.send({
-              image: webcamRef?.current?.video as InputImage,
-            });
+          onFrame: () => {
+            const results = faceDetection.detectForVideo(
+              webcamRef?.current?.video as HTMLVideoElement,
+              webcamRef?.current?.video?.currentTime as number,
+            );
+            setFacesDetected(results.detections.length);
+            results.detections[0] &&
+              setBoundingBox(results.detections[0].boundingBox);
+
+            if (isLoading) setIsLoading(false);
           },
           ...videoConstraints,
         } as CameraOptions,
@@ -109,16 +110,16 @@ function CameraStep() {
       setCamera(camera);
       camera.start();
     }
-  }, [faceDetection, imageSrc, understood]);
+  }, [faceDetection, imageSrc]);
 
   React.useEffect(() => {
     if (facesDetected === 1 && boundingBox) {
       if (
-        boundingBox.width > 0.25 &&
-        boundingBox.xCenter > 0.4 &&
-        boundingBox.xCenter < 0.6 &&
-        boundingBox.yCenter > 0.5 &&
-        boundingBox.yCenter < 0.65
+        boundingBox.width > 330 &&
+        boundingBox.originX > 430 &&
+        boundingBox.originX < 510 &&
+        boundingBox.originY < 300 &&
+        boundingBox.originY > 200
       ) {
         return setIsBigEnough(true);
       }
@@ -189,6 +190,8 @@ function CameraStep() {
                 audio={false}
                 ref={webcamRef}
                 screenshotFormat="image/jpeg"
+                screenshotQuality={1}
+                disablePictureInPicture={true}
                 mirrored={true}
                 videoConstraints={videoConstraints}
                 className="h-full max-h-full w-full self-center object-cover"
