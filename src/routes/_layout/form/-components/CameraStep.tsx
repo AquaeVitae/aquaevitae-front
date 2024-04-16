@@ -3,8 +3,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useFormState, type FormData } from "./FormContext";
 import { useFormContext } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
+import { useAnimationFrame } from "framer-motion"
 
-import { Camera, type CameraOptions } from "@mediapipe/camera_utils";
 import {
   FaceDetector,
   type BoundingBox,
@@ -36,8 +36,6 @@ function CameraStep() {
   const [faceDetection, setFaceDetection] = React.useState<FaceDetector>();
   const [isBigEnough, setIsBigEnough] = React.useState(false);
 
-  const [camera, setCamera] = React.useState<Camera>();
-
   React.useEffect(() => {
     setTimeout(() => {
       setUnderstood(true);
@@ -52,16 +50,14 @@ function CameraStep() {
   const capture = React.useCallback(() => {
     if (imageSrc) {
       setIsLoading(true);
-      camera?.start();
       setImageSrc("");
     } else {
       const imageSrc = webcamRef.current?.getScreenshot();
       if (imageSrc) {
-        camera?.stop();
         setImageSrc(imageSrc);
       }
     }
-  }, [webcamRef, setImageSrc, imageSrc, camera]);
+  }, [webcamRef, setImageSrc, imageSrc]);
 
   React.useEffect(() => {
     const loadFaceDectector = async () => {
@@ -82,35 +78,20 @@ function CameraStep() {
     loadFaceDectector();
   }, []);
 
-  React.useEffect(() => {
-    return () => {
-      camera?.stop();
-    };
-  }, [camera]);
+  useAnimationFrame((timestamp) => {
+    if (!faceDetection || !webcamRef) return
 
-  React.useEffect(() => {
-    if (faceDetection && !camera) {
-      const camera = new Camera(
-        webcamRef?.current?.video as HTMLVideoElement,
-        {
-          onFrame: () => {
-            const results = faceDetection.detectForVideo(
-              webcamRef?.current?.video as HTMLVideoElement,
-              webcamRef?.current?.video?.currentTime as number,
-            );
-            setFacesDetected(results.detections.length);
-            results.detections[0] &&
-              setBoundingBox(results.detections[0].boundingBox);
+    const results = faceDetection.detectForVideo(
+      webcamRef?.current?.video as HTMLVideoElement,
+      timestamp,
+    );
 
-            if (isLoading) setIsLoading(false);
-          },
-          ...videoConstraints,
-        } as CameraOptions,
-      );
-      setCamera(camera);
-      camera.start();
-    }
-  }, [faceDetection, imageSrc]);
+    setFacesDetected(results.detections.length);
+    results.detections[0] &&
+    setBoundingBox(results.detections[0].boundingBox);
+
+    if (isLoading) setIsLoading(false);
+  })
 
   React.useEffect(() => {
     if (facesDetected === 1 && boundingBox) {
@@ -153,7 +134,6 @@ function CameraStep() {
   });
 
   const submitPicture = () => {
-    camera?.stop();
     mutation.mutate({ storeImage: formData.storeImage, image: imageSrc });
   };
 
@@ -213,7 +193,6 @@ function CameraStep() {
         </form>
       </CardContent>
       <FormFooter
-        onHandleBack={() => camera?.stop()}
         disableContinue={imageSrc === "" || !understood}
         nextStep={2}
         onHandleNext={submitPicture}
