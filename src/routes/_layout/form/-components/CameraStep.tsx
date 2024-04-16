@@ -5,12 +5,6 @@ import { useFormContext } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
 
 import { Camera, type CameraOptions } from "@mediapipe/camera_utils";
-// import {
-//   FaceDetection as _FaceDetection,
-//   type InputImage,
-//   type NormalizedRect,
-// } from "@mediapipe/tasks-vision";
-
 import {
   FaceDetector,
   type BoundingBox,
@@ -107,7 +101,7 @@ function CameraStep() {
             setFacesDetected(results.detections.length);
             results.detections[0] &&
               setBoundingBox(results.detections[0].boundingBox);
-            
+
             if (isLoading) setIsLoading(false);
           },
           ...videoConstraints,
@@ -125,7 +119,7 @@ function CameraStep() {
         boundingBox.originX > 430 &&
         boundingBox.originX < 510 &&
         boundingBox.originY < 300 &&
-        boundingBox.originY > 200 
+        boundingBox.originY > 200
       ) {
         return setIsBigEnough(true);
       }
