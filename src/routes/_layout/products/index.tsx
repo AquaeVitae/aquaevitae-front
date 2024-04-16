@@ -8,13 +8,12 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, useRouter } from "@tanstack/react-router";
+import { useCallback, useState } from "react";
 
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
@@ -24,433 +23,117 @@ import {
 import { Product } from "@/lib/types";
 import ProductCard from "./-components/ProductCard";
 import { Badge } from "@/components/ui/badge";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { toast } from "@/components/ui/use-toast";
+import { z } from "zod";
+import { FormLoading } from "../form/-components/FormLoading";
+
+const productSearchSchema = z.object({
+  page: z.number().catch(1),
+  form_id: z.string().uuid().catch("")
+})
+
 
 export const Route = createFileRoute("/_layout/products/")({
   component: ProductsPage,
+  validateSearch: productSearchSchema
 });
 
 function ProductsPage() {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const router = useRouter()
+  const { form_id, page } = Route.useSearch()
 
-  const response = {
-    count: 1,
-    next: null,
-    previous: null,
-    results: [
-      {
-        id: "1fe449cb-d10f-43ad-bb9d-4b858b461b6a",
-        ingredients: [
-          "Aqua (water)",
-          "glycerin",
-          "cetearyl octanoate",
-          "caprilic-capric triglyceride",
-          "glyceryl stearate",
-          "cetyl alcohol",
-          "urea",
-          "aloe barbadensis (aloe vera extract)",
-          "lanolin",
-          "tocopheryl acetate",
-          "allantoin",
-          "triethanolamine",
-          "sodium laurylsulphate",
-          "sodium lauryl sulphosuccinate",
-          "methylparaben",
-          "potassium sorbate",
-          "propylparaben",
-          "propyl gallate",
-          "BHA",
-          "fragance (parfum)",
-          "benzyl alcohol",
-          "citral",
-          "tree moss extract",
-          "geraniol",
-          "hexyl cinnamal",
-          "limonene",
-          "linalool",
-        ],
-        skin_types: [
-          {
-            code: 0,
-            verbose_name: "All",
-          },
-        ],
-        skin_needs: [
-          {
-            code: 17,
-            verbose_name: "Feet",
-          },
-          {
-            code: 3,
-            verbose_name: "Hidrate",
-          },
-          {
-            code: 4,
-            verbose_name: "Nourish",
-          },
-        ],
-        skin_solar_needs: [],
-        image: "https://generated.vusercontent.net/placeholder.svg",
-        score: 2.5,
-        created_at: "2024-04-12T12:02:55.464829Z",
-        updated_at: "2024-04-12T12:02:55.464856Z",
-        is_deleted: false,
-        name: "Creme Hidratante de Pés",
-        size: 75.0,
-        size_type: "Ml",
-        characteristics:
-          "Indicado para todos os tipos de pele, o Creme de Pés Hidratante com Água Termal Flaviense é excelente para manter os pés suaves e macios",
-        recommended_use:
-          "Aplicar de manhã e/ou à noite na pele previamente limpa e seca.",
-        contraindications: "Uso externo.",
-        price: 4.95,
-        url: "https://loja.termasdechaves.com/produto/creme-de-pes-hidratante-75ml/",
-        category: {
-          code: "B",
-          verbose_name: "Body",
-        },
-        type: {
-          code: 8,
-          verbose_name: "Cream",
-        },
-      },
-      {
-        id: "1fe449cb-d10f-43ad-bb9d-4b858b461b6a",
-        ingredients: [
-          "Aqua (water)",
-          "glycerin",
-          "cetearyl octanoate",
-          "caprilic-capric triglyceride",
-          "glyceryl stearate",
-          "cetyl alcohol",
-          "urea",
-          "aloe barbadensis (aloe vera extract)",
-          "lanolin",
-          "tocopheryl acetate",
-          "allantoin",
-          "triethanolamine",
-          "sodium laurylsulphate",
-          "sodium lauryl sulphosuccinate",
-          "methylparaben",
-          "potassium sorbate",
-          "propylparaben",
-          "propyl gallate",
-          "BHA",
-          "fragance (parfum)",
-          "benzyl alcohol",
-          "citral",
-          "tree moss extract",
-          "geraniol",
-          "hexyl cinnamal",
-          "limonene",
-          "linalool",
-        ],
-        skin_types: [
-          {
-            code: 0,
-            verbose_name: "All",
-          },
-        ],
-        skin_needs: [
-          {
-            code: 17,
-            verbose_name: "Feet",
-          },
-          {
-            code: 3,
-            verbose_name: "Hidrate",
-          },
-          {
-            code: 4,
-            verbose_name: "Nourish",
-          },
-        ],
-        skin_solar_needs: [],
-        image: "https://generated.vusercontent.net/placeholder.svg",
-        score: 2.0,
-        created_at: "2024-04-12T12:02:55.464829Z",
-        updated_at: "2024-04-12T12:02:55.464856Z",
-        is_deleted: false,
-        name: "Creme Hidratante de Pés",
-        size: 75.0,
-        size_type: "Ml",
-        characteristics:
-          "Indicado para todos os tipos de pele, o Creme de Pés Hidratante com Água Termal Flaviense é excelente para manter os pés suaves e macios",
-        recommended_use:
-          "Aplicar de manhã e/ou à noite na pele previamente limpa e seca.",
-        contraindications: "Uso externo.",
-        price: null,
-        url: "https://loja.termasdechaves.com/produto/creme-de-pes-hidratante-75ml/",
-        category: {
-          code: "B",
-          verbose_name: "Body",
-        },
-        type: {
-          code: 8,
-          verbose_name: "Cream",
-        },
-      },
-      {
-        id: "1fe449cb-d10f-43ad-bb9d-4b858b461b6a",
-        ingredients: [
-          "Aqua (water)",
-          "glycerin",
-          "cetearyl octanoate",
-          "caprilic-capric triglyceride",
-          "glyceryl stearate",
-          "cetyl alcohol",
-          "urea",
-          "aloe barbadensis (aloe vera extract)",
-          "lanolin",
-          "tocopheryl acetate",
-          "allantoin",
-          "triethanolamine",
-          "sodium laurylsulphate",
-          "sodium lauryl sulphosuccinate",
-          "methylparaben",
-          "potassium sorbate",
-          "propylparaben",
-          "propyl gallate",
-          "BHA",
-          "fragance (parfum)",
-          "benzyl alcohol",
-          "citral",
-          "tree moss extract",
-          "geraniol",
-          "hexyl cinnamal",
-          "limonene",
-          "linalool",
-        ],
-        skin_types: [
-          {
-            code: 0,
-            verbose_name: "All",
-          },
-        ],
-        skin_needs: [
-          {
-            code: 17,
-            verbose_name: "Feet",
-          },
-          {
-            code: 3,
-            verbose_name: "Hidrate",
-          },
-          {
-            code: 4,
-            verbose_name: "Nourish",
-          },
-        ],
-        skin_solar_needs: [],
-        image: "https://generated.vusercontent.net/placeholder.svg",
-        score: null,
-        created_at: "2024-04-12T12:02:55.464829Z",
-        updated_at: "2024-04-12T12:02:55.464856Z",
-        is_deleted: false,
-        name: "Creme Hidratante de Pés",
-        size: 75.0,
-        size_type: "Ml",
-        characteristics:
-          "Indicado para todos os tipos de pele, o Creme de Pés Hidratante com Água Termal Flaviense é excelente para manter os pés suaves e macios",
-        recommended_use:
-          "Aplicar de manhã e/ou à noite na pele previamente limpa e seca.",
-        contraindications: "Uso externo.",
-        price: 4.95,
-        url: "https://loja.termasdechaves.com/produto/creme-de-pes-hidratante-75ml/",
-        category: {
-          code: "B",
-          verbose_name: "Body",
-        },
-        type: {
-          code: 8,
-          verbose_name: "Cream",
-        },
-      },
-      {
-        id: "1fe449cb-d10f-43ad-bb9d-4b858b461b6a",
-        ingredients: [
-          "Aqua (water)",
-          "glycerin",
-          "cetearyl octanoate",
-          "caprilic-capric triglyceride",
-          "glyceryl stearate",
-          "cetyl alcohol",
-          "urea",
-          "aloe barbadensis (aloe vera extract)",
-          "lanolin",
-          "tocopheryl acetate",
-          "allantoin",
-          "triethanolamine",
-          "sodium laurylsulphate",
-          "sodium lauryl sulphosuccinate",
-          "methylparaben",
-          "potassium sorbate",
-          "propylparaben",
-          "propyl gallate",
-          "BHA",
-          "fragance (parfum)",
-          "benzyl alcohol",
-          "citral",
-          "tree moss extract",
-          "geraniol",
-          "hexyl cinnamal",
-          "limonene",
-          "linalool",
-        ],
-        skin_types: [
-          {
-            code: 0,
-            verbose_name: "All",
-          },
-        ],
-        skin_needs: [
-          {
-            code: 17,
-            verbose_name: "Feet",
-          },
-          {
-            code: 3,
-            verbose_name: "Hidrate",
-          },
-          {
-            code: 4,
-            verbose_name: "Nourish",
-          },
-        ],
-        skin_solar_needs: [],
-        image: "https://generated.vusercontent.net/placeholder.svg",
-        score: 9.0,
-        created_at: "2024-04-12T12:02:55.464829Z",
-        updated_at: "2024-04-12T12:02:55.464856Z",
-        is_deleted: false,
-        name: "Creme Hidratante de Pés",
-        size: 75.0,
-        size_type: "Ml",
-        characteristics:
-          "Indicado para todos os tipos de pele, o Creme de Pés Hidratante com Água Termal Flaviense é excelente para manter os pés suaves e macios",
-        recommended_use:
-          "Aplicar de manhã e/ou à noite na pele previamente limpa e seca.",
-        contraindications: "Uso externo.",
-        price: 4.95,
-        url: "https://loja.termasdechaves.com/produto/creme-de-pes-hidratante-75ml/",
-        category: {
-          code: "B",
-          verbose_name: "Body",
-        },
-        type: {
-          code: 8,
-          verbose_name: "Cream",
-        },
-      },
-      {
-        id: "1fe449cb-d10f-43ad-bb9d-4b858b461b6a",
-        ingredients: [
-          "Aqua (water)",
-          "glycerin",
-          "cetearyl octanoate",
-          "caprilic-capric triglyceride",
-          "glyceryl stearate",
-          "cetyl alcohol",
-          "urea",
-          "aloe barbadensis (aloe vera extract)",
-          "lanolin",
-          "tocopheryl acetate",
-          "allantoin",
-          "triethanolamine",
-          "sodium laurylsulphate",
-          "sodium lauryl sulphosuccinate",
-          "methylparaben",
-          "potassium sorbate",
-          "propylparaben",
-          "propyl gallate",
-          "BHA",
-          "fragance (parfum)",
-          "benzyl alcohol",
-          "citral",
-          "tree moss extract",
-          "geraniol",
-          "hexyl cinnamal",
-          "limonene",
-          "linalool",
-        ],
-        skin_types: [
-          {
-            code: 0,
-            verbose_name: "All",
-          },
-        ],
-        skin_needs: [
-          {
-            code: 17,
-            verbose_name: "Feet",
-          },
-          {
-            code: 3,
-            verbose_name: "Hidrate",
-          },
-          {
-            code: 4,
-            verbose_name: "Nourish",
-          },
-        ],
-        skin_solar_needs: [],
-        image: "https://generated.vusercontent.net/placeholder.svg",
-        score: null,
-        created_at: "2024-04-12T12:02:55.464829Z",
-        updated_at: "2024-04-12T12:02:55.464856Z",
-        is_deleted: false,
-        name: "Creme Hidratante de Pés",
-        size: 75.0,
-        size_type: "Ml",
-        characteristics:
-          "Indicado para todos os tipos de pele, o Creme de Pés Hidratante com Água Termal Flaviense é excelente para manter os pés suaves e macios",
-        recommended_use:
-          "Aplicar de manhã e/ou à noite na pele previamente limpa e seca.",
-        contraindications: "Uso externo.",
-        price: 4.95,
-        url: "https://loja.termasdechaves.com/produto/creme-de-pes-hidratante-75ml/",
-        category: {
-          code: "B",
-          verbose_name: "Body",
-        },
-        type: {
-          code: 8,
-          verbose_name: "Cream",
-        },
-      },
-    ],
-  };
+  const fetchProducts = async ({form_id, page}: z.infer<typeof productSearchSchema>) => {
+    var params = {};
+    if (form_id) {
+      params = {...params, ...{"form_id": form_id}}
+    }
+    if (page) {
+      params = {...params, ...{"page": page}}
+    }
+    try {
+      const res = await axios.get("products/", {params})
+      return res.data
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status == 404) {
+          return router.navigate({
+            from: Route.fullPath,
+            search: {form_id}
+          })
+        }
+      }
+    throw error
+    } 
+  }
+
+  const { isPending, isError, data} = useQuery({
+    queryKey: ["products", form_id, page],
+    queryFn: () => fetchProducts({form_id, page})
+  })
+
+  const handleNextPage = useCallback(()=>{
+    router.navigate({
+      from: Route.fullPath,
+      search: {form_id, page:data.next}
+    })
+  }, [data])
+
+  const handlePreviousPage = useCallback(()=>{
+    router.navigate({
+      from: Route.fullPath,
+      search: {form_id, page:data.previous}
+    })
+  }, [data])
+
+  if (isPending) {
+    return <FormLoading/>
+  }
+
+  if (isError) {
+    toast({
+      variant: "destructive",
+      title: "Algo deu errado :(",
+      description:
+        "Por favor tente novamente mais tarde ou entre em contato com um dos nossos administradores.",
+    });
+    router.navigate({to: "/"})
+    return <></>
+  }
 
   return (
     <>
       <div className="z-40 grid w-full max-w-screen-xl grid-cols-[repeat(auto-fill,minmax(18rem,2fr))] gap-4 p-6">
-        {response.results.map((product, index) => {
+        {data.results.map((product:any, index:any) => {
           return (
             <ProductCard
               key={index}
               product={product}
               index={index}
               setSelectedProduct={setSelectedProduct}
-              productsLength={response.results.length}
+              productsLength={data.results.length}
+              hasBadge={form_id && (!page || page === 1) ? true : false}
             />
           );
         })}
       </div>
+      { form_id || (data.count <= 20) ? null :
       <Pagination>
         <PaginationContent>
           <PaginationItem>
-            <PaginationPrevious href="#" />
+            <PaginationPrevious isActive={data.previous ? true : false} onClick={handlePreviousPage} />
           </PaginationItem>
           <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
+            <PaginationLink isActive={true}>{page}</PaginationLink>
           </PaginationItem>
           <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext href="#" />
+            <PaginationNext isActive={data.next ? true : false} onClick={handleNextPage} /> 
           </PaginationItem>
         </PaginationContent>
       </Pagination>
+      }
       {selectedProduct && (
         <Sheet
           open={!!selectedProduct}

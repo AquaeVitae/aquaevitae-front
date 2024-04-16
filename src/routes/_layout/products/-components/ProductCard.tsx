@@ -13,11 +13,13 @@ export default function ProductCard({
   index,
   setSelectedProduct,
   productsLength,
+  hasBadge
 }: {
   product: Product;
   index: number;
   productsLength: number;
   setSelectedProduct: (product: Product) => void;
+  hasBadge: boolean;
 }) {
   return (
     <Card
@@ -31,23 +33,23 @@ export default function ProductCard({
           className="aspect-square w-full overflow-hidden rounded-md object-cover"
           src={product.image}
         />
-        {
+        {hasBadge ?
           <Badge
             variant="secondary"
             className={`absolute left-7 top-5 z-10 w-fit animate-shine border border-primary/75 bg-white ${
               index < productsLength * 0.3
-                ? "bg-gradient-to-r from-primary via-primary/50 to-primary"
+                ? "bg-gradient-to-r from-primary via-primary/60 to-primary"
                 : index < productsLength * 0.6
-                  ? "bg-gradient-to-r from-primary/65 via-primary/25 to-primary/65"
+                  ? "bg-gradient-to-r from-primary/55 via-primary/35 to-primary/55"
                   : "bg-gradient-to-r from-primary/25 via-primary/10 to-primary/25"
             } bg-[length:400%_100%] uppercase`}
           >
             {index < productsLength * 0.3
-              ? "High"
+              ? "Importante"
               : index < productsLength * 0.6
-                ? "Medium"
-                : "Low"}
-          </Badge>
+                ? "Recomendado"
+                : "Opcional"}
+          </Badge> : null
         }
       </CardHeader>
       <CardContent className="p-4 text-muted-foreground">
