@@ -87,6 +87,12 @@ function CameraStep() {
     setFaceDetection(faceDetection);
   }, []);
 
+  React.useEffect(()=>{
+    return () => {
+      camera?.stop()
+    }
+  },[camera])
+
   React.useEffect(() => {
     if (faceDetection && !camera && understood) {
       const camera = new Camera(
