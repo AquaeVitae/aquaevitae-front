@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.3.4",
+    "@mediapipe/camera_utils": "^0.3.1675466862",
+    "@mediapipe/face_detection": "^0.4.1646425229",
+    "@mediapipe/tasks-vision": "^0.10.12",
     "@radix-ui/react-checkbox": "^1.0.4",
     "@radix-ui/react-dialog": "^1.0.5",
     "@radix-ui/react-label": "^2.0.2",
@@ -34,7 +37,6 @@
     "cmdk": "^1.0.0",
     "framer-motion": "^11.0.22",
     "i18n-iso-countries": "^7.11.0",
-    "install": "^0.13.0",
     "libphonenumber-js": "^1.10.60",
     "lucide-react": "^0.354.0",
     "react": "^18.2.0",

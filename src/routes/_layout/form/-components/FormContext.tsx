@@ -150,7 +150,7 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({
     setFormData((prevData) => ({ ...prevData, ...data }));
   };
 
-  const { isPending, isError, isSuccess, refetch } = useQuery({
+  const { isError, isSuccess, refetch, isLoading } = useQuery({
     queryKey: ["analysis", formData.facialAnalysis],
     queryFn: getAnalysisDetails,
     retry: 30,
@@ -202,7 +202,7 @@ export const FormProvider: React.FC<{ children: React.ReactNode }> = ({
       }}
     >
       <RHFProvider {...methods}>
-        {isPending && step === 3 ? <FormLoading /> : children}
+        {isLoading && step === 3 ? <FormLoading /> : children}
       </RHFProvider>
     </FormContext.Provider>
   );
