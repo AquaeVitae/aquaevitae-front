@@ -68,7 +68,6 @@ function CameraStep() {
         minDetectionConfidence: 0.85,
         runningMode: "VIDEO",
         baseOptions: {
-          delegate: "CPU",
           modelAssetPath:
             "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_short_range/float16/1/blaze_face_short_range.tflite",
         },
@@ -78,31 +77,57 @@ function CameraStep() {
     loadFaceDectector();
   }, []);
 
+  var lastTimestamp = -1;
   useAnimationFrame((timestamp) => {
     if (!faceDetection || !webcamRef) return
-
-    const results = faceDetection.detectForVideo(
-      webcamRef?.current?.video as HTMLVideoElement,
-      timestamp,
-    );
-
-    setFacesDetected(results.detections.length);
-    results.detections[0] &&
-    setBoundingBox(results.detections[0].boundingBox);
-
-    if (isLoading) setIsLoading(false);
+    if (lastTimestamp == -1) lastTimestamp = timestamp;
+    if (timestamp - lastTimestamp > 300 ){
+      const results = faceDetection.detectForVideo(
+        webcamRef?.current?.video as HTMLVideoElement,
+        timestamp,
+      );
+  
+      setFacesDetected(results.detections.length);
+      results.detections[0] &&
+      setBoundingBox(results.detections[0].boundingBox);
+  
+      if (isLoading) setIsLoading(false);
+      lastTimestamp = timestamp
+    }
   })
 
   React.useEffect(() => {
     if (facesDetected === 1 && boundingBox) {
-      if (
-        boundingBox.width > 330 &&
-        boundingBox.originX > 430 &&
-        boundingBox.originX < 510 &&
-        boundingBox.originY < 300 &&
-        boundingBox.originY > 200
-      ) {
-        return setIsBigEnough(true);
+      const videoWidth = webcamRef.current?.video?.videoWidth ? webcamRef.current?.video?.videoWidth : 0;
+      const videoHeight = webcamRef.current?.video?.videoHeight ? webcamRef.current?.video?.videoHeight : 0;
+
+      let perWidth = boundingBox.width  / videoWidth
+      let perHeight = boundingBox.height  / videoHeight
+      let perOriginX = boundingBox.originX  / videoWidth
+      let perOriginY = boundingBox.originY  / videoHeight
+      
+      if (videoWidth > videoHeight) {
+        if (
+          perWidth > 0.25 &&
+          perHeight > 0.43 &&
+          perOriginX > 0.30 &&
+          perOriginX < 0.40 &&
+          perOriginY > 0.30 &&
+          perOriginY < 0.40
+        ) {
+          return setIsBigEnough(true);
+        }
+      } else {
+        if (
+          perWidth > 0.58 &&
+          perHeight > 0.33 &&
+          perOriginX > 0.15 &&
+          perOriginX < 0.25 &&
+          perOriginY > 0.35 &&
+          perOriginY < 0.45 
+        ) {
+          return setIsBigEnough(true);
+        }
       }
     }
     setIsBigEnough(false);

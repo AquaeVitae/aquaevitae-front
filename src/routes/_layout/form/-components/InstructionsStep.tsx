@@ -9,7 +9,7 @@ export default function Instructions({ setUnderstood }: any) {
       "Não utilize nenhum tipo de acessório (óculos, boné, etc) e/ou maquiagem no momento da fotografia;",
     forthParagraph: "Se certifique que não há nada cobrindo o seu rosto;",
     footer:
-      "Lembrando que a imagem enviada será utilizada única e exclusivamente para gerar seu plano de produtos exclusivo! ;)",
+      "Lembrando que a imagem enviada será utilizada única e exclusivamente para gerar seu plano de produtos exclusivo ;)",
   };
 
   const createMarkup = (html: any) => {
