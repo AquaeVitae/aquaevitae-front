@@ -1,14 +1,13 @@
 
 export const skinType = {
   "1": { en: "Dry", pt: "Seca" },
-  "2": { en: "Sensitive", pt: "Sensível" },
-  "3": { en: "Sensible", pt: "Sensibilizada" },
-  "4": { en: "Extra Dry", pt: "Muito Seca" },
-  "5": { en: "Combined", pt: "Mista" },
-  "6": { en: "Irritated", pt: "Irritada" },
-  "7": { en: "Normal", pt: "Normal" },
-  "8": { en: "Atopic Tendency", pt: "Tendência Atópica" },
-  "9": { en: "Fragile Damaged", pt: "Danificada e Frágil" },
+  "2": { en: "Sensible", pt: "Sensível" },
+  "3": { en: "Extra Dry", pt: "Muito Seca" },
+  "4": { en: "Combined", pt: "Mista" },
+  "5": { en: "Irritated", pt: "Irritada" },
+  "6": { en: "Normal", pt: "Normal" },
+  "7": { en: "Atopic Tendency", pt: "Tendência Atópica" },
+  "8": { en: "Fragile Damaged", pt: "Danificada e Frágil" },
   "0": { en: "Not Sure", pt: "Não Tenho Certeza" },
 };
 
