@@ -23,6 +23,7 @@ COPY . .
 
 # [optional] tests & build
 ENV NODE_ENV=production
+ENV VITE_API_URL="http://aquaevitae1.ipb.pt/api/"
 RUN bun run build
 
 # copy production dependencies and source code into final image
@@ -37,5 +38,3 @@ COPY nginx.conf /etc/nginx/nginx.conf
 RUN rm -rf /usr/share/nginx/html/*
 # Copy from the stage 1
 COPY --from=release /usr/src/app/dist /usr/share/nginx/html/app
-EXPOSE 8080
-ENTRYPOINT ["nginx", "-g", "daemon off;"]
