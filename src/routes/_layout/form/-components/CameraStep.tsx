@@ -3,7 +3,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useFormState, type FormData } from "./FormContext";
 import { useFormContext } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
-import { useAnimationFrame } from "framer-motion"
+import { useAnimationFrame } from "framer-motion";
 
 import {
   FaceDetector,
@@ -79,41 +79,47 @@ function CameraStep() {
 
   var lastTimestamp = -1;
   useAnimationFrame((timestamp) => {
-    if (!faceDetection || !webcamRef) return
+    if (!faceDetection || !webcamRef) return;
     if (lastTimestamp == -1) lastTimestamp = timestamp;
-    if (timestamp - lastTimestamp > 300 ){
-      const results = faceDetection.detectForVideo(
-        webcamRef?.current?.video as HTMLVideoElement,
-        timestamp,
-      );
-  
-      setFacesDetected(results.detections.length);
-      results.detections[0] &&
-      setBoundingBox(results.detections[0].boundingBox);
-  
-      if (isLoading) setIsLoading(false);
-      lastTimestamp = timestamp
+    if (timestamp - lastTimestamp > 300) {
+      if (webcamRef && webcamRef.current && webcamRef.current.video) {
+        const results = faceDetection.detectForVideo(
+          webcamRef?.current?.video as HTMLVideoElement,
+          timestamp,
+        );
+
+        setFacesDetected(results.detections.length);
+        results.detections[0] &&
+          setBoundingBox(results.detections[0].boundingBox);
+
+        if (isLoading) setIsLoading(false);
+        lastTimestamp = timestamp;
+      }
     }
-  })
+  });
 
   React.useEffect(() => {
     if (facesDetected === 1 && boundingBox) {
-      const videoWidth = webcamRef.current?.video?.videoWidth ? webcamRef.current?.video?.videoWidth : 0;
-      const videoHeight = webcamRef.current?.video?.videoHeight ? webcamRef.current?.video?.videoHeight : 0;
+      const videoWidth = webcamRef.current?.video?.videoWidth
+        ? webcamRef.current?.video?.videoWidth
+        : 0;
+      const videoHeight = webcamRef.current?.video?.videoHeight
+        ? webcamRef.current?.video?.videoHeight
+        : 0;
 
-      let perWidth = boundingBox.width  / videoWidth
-      let perHeight = boundingBox.height  / videoHeight
-      let perOriginX = boundingBox.originX  / videoWidth
-      let perOriginY = boundingBox.originY  / videoHeight
-      
+      let perWidth = boundingBox.width / videoWidth;
+      let perHeight = boundingBox.height / videoHeight;
+      let perOriginX = boundingBox.originX / videoWidth;
+      let perOriginY = boundingBox.originY / videoHeight;
+
       if (videoWidth > videoHeight) {
         if (
           perWidth > 0.25 &&
           perHeight > 0.43 &&
-          perOriginX > 0.30 &&
-          perOriginX < 0.40 &&
-          perOriginY > 0.30 &&
-          perOriginY < 0.40
+          perOriginX > 0.3 &&
+          perOriginX < 0.4 &&
+          perOriginY > 0.3 &&
+          perOriginY < 0.4
         ) {
           return setIsBigEnough(true);
         }
@@ -124,7 +130,7 @@ function CameraStep() {
           perOriginX > 0.15 &&
           perOriginX < 0.25 &&
           perOriginY > 0.35 &&
-          perOriginY < 0.45 
+          perOriginY < 0.45
         ) {
           return setIsBigEnough(true);
         }
