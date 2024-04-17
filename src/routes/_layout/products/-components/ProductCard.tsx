@@ -24,7 +24,7 @@ export default function ProductCard({
   return (
     <Card
       key={index}
-      className="group min-h-[520px] hover:cursor-pointer"
+      className="group min-h-[500px] hover:cursor-pointer"
       onClick={() => setSelectedProduct(product)}
     >
       <CardHeader className="relative p-4 pb-0">
@@ -54,7 +54,20 @@ export default function ProductCard({
       </CardHeader>
       <CardContent className="p-4 text-muted-foreground">
         <div className="space-y-2">
-          <div className="flex w-full space-x-2">
+          
+          <div>
+            <h3 className="text-balance text-lg font-bold group-hover:text-secondary-foreground">
+              {product.name} {product.size}{" "}
+              <span className="lowercase">{product.size_type}</span>
+            </h3>
+          </div>
+        </div>
+      </CardContent>
+      <CardFooter className="p-4 flex flex-col justify-between h-auto gap-4 pt-1">
+        <p className="text-xs min-h-16 w-full text-left text-muted-foreground">
+          {product.characteristics}
+        </p>
+        <div className="flex w-full flex-wrap gap-2">
             {product.skin_needs.map((need, index) => (
               <Badge
                 key={index}
@@ -64,27 +77,6 @@ export default function ProductCard({
               </Badge>
             ))}
           </div>
-          <div>
-            <h3 className="text-balance text-lg font-bold group-hover:text-secondary-foreground">
-              {product.name} {product.size}{" "}
-              <span className="lowercase">{product.size_type}</span>
-            </h3>
-
-            <p className={`${product.price === null ? "opacity-0" : ""}`}>
-              {product.price
-                ? new Intl.NumberFormat("pt-PT", {
-                    style: "currency",
-                    currency: "EUR",
-                  }).format(product.price)
-                : 0}
-            </p>
-          </div>
-        </div>
-      </CardContent>
-      <CardFooter className="p-4 pt-1">
-        <p className="text-xs text-muted-foreground">
-          {product.characteristics}
-        </p>
       </CardFooter>
     </Card>
   );
