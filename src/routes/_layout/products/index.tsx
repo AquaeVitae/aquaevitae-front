@@ -97,7 +97,7 @@ function ProductsPage() {
   return isPending ? (
     <div className="z-40 grid w-full max-w-screen-xl grid-cols-[repeat(auto-fill,minmax(18rem,2fr))] gap-4 p-6">
       {Array.from({ length: 8 }).map((_, index) => (
-        <Skeleton key={index} className="min-h-[520px]" />
+        <Skeleton key={index} className="min-h-[500px]" />
       ))}
     </div>
   ) : (
