@@ -23,7 +23,7 @@ COPY . .
 
 # [optional] tests & build
 ENV NODE_ENV=production
-ENV VITE_API_URL="http://aquaevitae1.ipb.pt/api/v1/"
+ENV VITE_API_URL="https://aquaevitae2.ipb.pt/api/v1/"
 RUN bun run build
 
 # copy production dependencies and source code into final image
