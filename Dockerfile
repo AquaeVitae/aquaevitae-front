@@ -38,4 +38,5 @@ COPY nginx.conf /etc/nginx/nginx.conf
 RUN rm -rf /usr/share/nginx/html/*
 # Copy from the stage 1
 COPY --from=release /usr/src/app/dist /usr/share/nginx/html/app
+
 ENTRYPOINT ["nginx", "-g", "daemon off;"]
